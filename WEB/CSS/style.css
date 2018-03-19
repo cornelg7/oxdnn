@@ -1,0 +1,51 @@
+/*THIS FILE CONTAINS THE STYLES COMMON TO ALL PAGES. 
+LOOK AT OTHER FILE FOR MORE SPECIFIC SETTINGS*/
+
+/* styles for the menu bar */
+.titleBar { /*class of the bar at the top of the page*/
+
+	background-color : lightblue;
+	position: fixed;
+	padding: 0rem;
+	top: 0px;
+	left: 0px;
+	display: block;
+	width: 100%;
+	height: 2rem;
+	font-size : 1.5rem;
+}
+
+.titleBarButtons { /*class of ul the buttons inside the top bar*/
+	display : inline;
+	top: 100px;
+}
+
+.titleBarButtons li {
+	display : inline;
+	margin: 0px;
+	padding: 0px;
+}
+
+.titleBarButtons li a {
+	padding : 0.25rem;
+	padding-left : 1rem;
+	padding-right : 1rem;
+	background-color: red;
+}
+
+/*--------------------------*/
+
+
+/*styles for the content of the page*/
+.page {
+	margin : 2rem;
+	margin-top : 4rem;
+	background-color: green;
+}
+
+section {
+	padding-top : 1.5rem;
+	padding-bottom: 1rem; /*note that this do not sum with padding-top, instead they collapse to the greatest */
+}
+
+/*----------------------------*/

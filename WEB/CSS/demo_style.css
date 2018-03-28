@@ -1,2 +1,42 @@
 /*THIS FILE CONTAINS THE STYLES FOR THE PAGE "DEMO". 
 LOOK AT STYLE.CSS TO SEE THE SETTINGS COMMON TO ALL PAGES*/
+
+/* drag and drop styles */
+.dragDrop {
+	padding : 3rem;
+	margin: 1rem;
+	margin-bottom: 2rem;
+	top: 1rem;
+	position: relative;
+	height: 20rem;
+	display: block;
+	background-color: blue;
+}
+
+/*--------------------------*/
+
+
+/* buttons styles */
+
+span {
+	display: block;
+}
+
+span button {
+	margin: 1rem;
+	margin-left: 3rem;
+
+}
+
+/*------------------------------*/
+
+
+/* output styles */
+
+#outputDiv {
+	padding: 2rem;
+	padding-top: 0.5rem;
+}
+
+
+/*--------------------------------*/

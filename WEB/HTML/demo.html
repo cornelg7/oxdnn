@@ -4,6 +4,17 @@
 		<title> Group Project Team 5 - Demo </title>
 		<link href="../CSS/style.css" rel="stylesheet" type="text/css" /> 
 		<link href="../CSS/demo_style.css" rel="stylesheet" type="text/css" /> 
+		
+		<!-- JS function to show/hide the ouptputDiv element-->
+		<script>
+			show = function(elementId) {
+				if(document.getElementById(elementId).style.display=='none') {
+					document.getElementById(elementId).style.display='';
+				} else {
+				document.getElementById(elementId).style.display='none';
+				}
+			}
+		</script>
 	</head>
 
 	<body>
@@ -13,7 +24,19 @@
 		<!-- div which contains the actual text of the page -->
 		<div class="page">
 		
-			
+		<div class="dragDrop">
+			Drag and drop to be implemented here	
+		</div>
+		
+		
+		<span> <button id="uploadButton">Upload</button> <button id ="CalculateButton" onclick="show('outputDiv')">Calculate</button> </span>
+		
+		<div id="outputDiv" style = "display:none">
+			<h3> Output : </h3>
+			<p> bla bla bla
+			</p>
+		</div>		
+		
 		</div>
 		
 	</body>

@@ -11,21 +11,31 @@ LOOK AT STYLE.CSS TO SEE THE SETTINGS COMMON TO ALL PAGES*/
 	height: 20rem;
 	display: block;
 	background-color: blue;
+	text-align: center;
 }
 
 /*--------------------------*/
 
+/* form style */
 
-/* buttons styles */
-
-span {
-	display: block;
+form {
+	padding-left: 1rem;
+	padding-right: 1rem;
+	padding-bottom: 1rem;
 }
 
-span button {
-	margin: 1rem;
-	margin-left: 3rem;
+#fileUploading {
+	width: 13rem;
+}
 
+/*-------------------------------*/
+
+/* progress bar styles */
+
+progress {
+	width: 50%;
+	margin-left: 1rem;
+	margin-right: 1rem;
 }
 
 /*------------------------------*/

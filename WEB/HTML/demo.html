@@ -15,6 +15,9 @@
 				}
 			}
 		</script>
+		
+		<!-- There's another JS script at the bottom of the page-->
+		
 	</head>
 
 	<body>
@@ -28,16 +31,63 @@
 			Drag and drop to be implemented here	
 		</div>
 		
-		
-		<span> <button id="uploadButton">Upload</button> <button id ="CalculateButton" onclick="show('outputDiv')">Calculate</button> </span>
+		<!--Here is the form to upload a file. We need to link action to a .php or .asp file which will run on the server and write the data collected here into a file-->
+		<form action="#" method="post" enctype="multipart/form-data">
+			Select picture to upload <input type="file" name="photo1" id="fileUploading" multiple accept="image/*"> 
+ 	 		<input type="submit" value="Upload"> Size limit: 10 MB
+ 	 	</form>	
+ 	 	 
+ 	 	 <!--This form will notify the server to run the network (file to be assigne to action) and return the result-->
+ 	 	 <!--When the button is clicked the uotputDiv is also shown (the result should be displayed there)-->
+ 	 	<form action="#" method = "get" >
+ 	 		<input type="submit" value="Try the demo" onclick="show('outputDiv')">
+ 	 	</form>
 		
 		<div id="outputDiv" style = "display:none">
 			<h3> Output : </h3>
 			<p> bla bla bla
 			</p>
-		</div>		
+		</div>
+		
+			
 		
 		</div>
+
+		<!-- JS to check what file is being uploaded-->
+		<!-- The script needs to be here so it can access the form element defined above-->
+		<script>
+			const MaxFileSize = 10485760; //10 MB
+			let check = function (evt) {
+				var file = document.getElementById('fileUploading').files; //get the file uploaded
+				
+				var regex = /^(image\/)(gif|(x-)?png|p?jpeg)$/i;
+				
+				console.log(file)
+				if (file.length === 0) {
+					alert('No file to upload')
+					evt.preventDefault(); //stop the upload
+					return //end the function call
+				}
+				
+				for (let i=0; i < file.length; i++) { //check each uploaded file
+					if( file[i].size >= MaxFileSize){
+						alert('File size: '+ file[i].size + 'B; - File too big')
+						evt.preventDefault(); //stop the upload
+						return
+					}
+					else if( file[i].type.search(regex) == -1) {
+						alert('File type: '+file[i].type+' - File type not allowed, upload a picture')
+        				evt.preventDefault(); //stop the upload
+        				return
+        			}
+				}
+				
+				alert('Uploading done successfully')
+			};
+			
+			//now call the check function whenever something is submitted
+			document.forms[0].addEventListener('submit', check, false );
+		</script>
 		
 	</body>
 </html>

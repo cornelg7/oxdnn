@@ -6,14 +6,7 @@
 		<link href="../CSS/demo_style.css" rel="stylesheet" type="text/css" /> 
 		
 		<!-- JS function to show/hide the ouptputDiv element-->
-		<script>
-			show = function(elementId) {
-				if(document.getElementById(elementId).style.display=='none') {
-					document.getElementById(elementId).style.display='';
-				} else {
-				document.getElementById(elementId).style.display='none';
-				}
-			}
+		<script src="../JS/showFunc.js">
 		</script>
 		
 		<!-- There's another JS script at the bottom of the page-->
@@ -27,8 +20,8 @@
 		<!-- div which contains the actual text of the page -->
 		<div class="page">
 		
-		<div class="dragDrop">
-			Drag and drop to be implemented here	
+		<div class="dragDrop" id ="dropZone">
+
 		</div>
 		
 		<!--Here is the form to upload a file. We need to link action to a .php or .asp file which will run on the server and write the data collected here into a file-->
@@ -55,38 +48,7 @@
 
 		<!-- JS to check what file is being uploaded-->
 		<!-- The script needs to be here so it can access the form element defined above-->
-		<script>
-			const MaxFileSize = 10485760; //10 MB
-			let check = function (evt) {
-				var file = document.getElementById('fileUploading').files; //get the file uploaded
-				
-				var regex = /^(image\/)(gif|(x-)?png|p?jpeg)$/i;
-				
-				console.log(file)
-				if (file.length === 0) {
-					alert('No file to upload')
-					evt.preventDefault(); //stop the upload
-					return //end the function call
-				}
-				
-				for (let i=0; i < file.length; i++) { //check each uploaded file
-					if( file[i].size >= MaxFileSize){
-						alert('File size: '+ file[i].size + 'B; - File too big')
-						evt.preventDefault(); //stop the upload
-						return
-					}
-					else if( file[i].type.search(regex) == -1) {
-						alert('File type: '+file[i].type+' - File type not allowed, upload a picture')
-        				evt.preventDefault(); //stop the upload
-        				return
-        			}
-				}
-				
-				alert('Uploading done successfully')
-			};
-			
-			//now call the check function whenever something is submitted
-			document.forms[0].addEventListener('submit', check, false );
+		<script src="../JS/Upload.js">
 		</script>
 		
 	</body>

@@ -3,7 +3,8 @@ LOOK AT STYLE.CSS TO SEE THE SETTINGS COMMON TO ALL PAGES*/
 
 /* drag and drop styles */
 .dragDrop {
-	padding : 3rem;
+	padding : 2rem;
+	padding-right: 0rem;
 	margin: 1rem;
 	margin-bottom: 2rem;
 	top: 1rem;
@@ -12,6 +13,15 @@ LOOK AT STYLE.CSS TO SEE THE SETTINGS COMMON TO ALL PAGES*/
 	display: block;
 	background-color: blue;
 	text-align: center;
+	overflow: scroll;
+}
+
+.dragDrop img {
+	width: 4rem;
+	height: 5rem;
+	margin-bottom: 1rem;
+	margin-right: 5rem;
+	float: left;
 }
 
 /*--------------------------*/

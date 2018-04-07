@@ -12,7 +12,6 @@ LOOK AT STYLE.CSS TO SEE THE SETTINGS COMMON TO ALL PAGES*/
 	height: 20rem;
 	display: block;
 	background-color: blue;
-	text-align: center;
 	overflow: scroll;
 }
 

@@ -1,4 +1,8 @@
 <!DOCTYPE html>
+
+<!-- here we include the php file which should handle the upload-->
+<?php include('file.php'); ?>
+
 <html>
 	<head>
 		<title> Group Project Team 5 - Demo </title>
@@ -25,16 +29,14 @@
 		</div>
 		
 		<!--Here is the form to upload a file. We need to link action to a .php or .asp file which will run on the server and write the data collected here into a file-->
-		<form action="#" method="post" enctype="multipart/form-data">
-			Select picture to upload <input type="file" name="photo1" id="fileUploading" multiple accept="image/*"> 
- 	 		<input type="submit" value="Upload"> Size limit: 10 MB
+		<form action='' method="post" enctype="multipart/form-data">
+			Select picture to upload 
+			<input type="file" name="photos[]" id="fileUploading" multiple accept="image/*"> 
+ 	 		<input type="submit" name="submit" value="Upload"> Size limit: 10 MB
  	 	</form>	
  	 	 
- 	 	 <!--This form will notify the server to run the network (file to be assigne to action) and return the result-->
- 	 	 <!--When the button is clicked the uotputDiv is also shown (the result should be displayed there)-->
- 	 	<form action="#" method = "get" >
- 	 		<input type="submit" value="Try the demo" onclick="show('outputDiv')">
- 	 	</form>
+ 	 	 
+ 	 	<button id="RunButton" onclick="show('outputDiv')">Try the demo </button>
 		
 		<div id="outputDiv" style = "display:none">
 			<h3> Output : </h3>

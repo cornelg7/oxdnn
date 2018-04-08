@@ -33,6 +33,7 @@ function FileUpload(image, file) {
 	var formData = new FormData();
 	
 	formData.append('picture', file);//add prefix to file
+	
   /*  I commented out the code to show upload progress; let's first make the upload work 
   	var self = this;
   	
@@ -62,6 +63,8 @@ function FileUpload(image, file) {
     //here we open the request to upload, the second argument is the .php file to call on the server
 	xhr.open("POST", "file.php", true);
 	xhr.send(formData);
+	
+	image.classList = ["Uploaded"] //so we know this file was uploaded
 
 }
 
@@ -87,29 +90,40 @@ const sendFiles = function () {
 const MaxFileSize = 10485760; //10 MB
 
 //this function checks the file which are being uploaded
-let check = function (files) {
+const checkFile = function (file) {
 
 	var regex = /^(image\/)(gif|(x-)?png|p?jpeg)$/i;
-
-	if (files.length === 0) {
-		alert('No file to upload')
-		return false//end the function call
-	}
 				
-	for (var i=0; i < files.length; i++) { //check each uploaded file
-		if( files[i].size >= MaxFileSize){
-			alert('File size: '+ files[i].size + 'B; - File too big')
-			return false
-		}
-		else if( files[i].type.search(regex) == -1) {
-			alert('File type: '+files[i].type+' - File type not allowed, upload a picture')
- 			return false
-  		}		
-        			
+	if( file.size >= MaxFileSize){
+		alert('File size: '+ files.size + 'B; - File too big')
+		return false
 	}
+	else if( file.type.search(regex) == -1) {
+		alert('File type: '+file.type+' - File type not allowed, upload a picture')
+ 		return false
+  	}		
+        			
 	
 	return true
 };
+
+
+const check = function (files) {
+
+	var newFiles = []
+	
+	for (var i =0; i< files.length; i++) {
+		if(checkFile(files[i])) newFiles.push(files[i])
+	}
+	
+	if(newFiles.length == 0){
+		alert('No file is uploaded')
+		return;
+	}
+	
+	return newFiles
+
+}
 
 //--------------------------------------------------------------
 
@@ -136,13 +150,13 @@ const dragover = function (event) {
 const drop = function (event) {
 	event.stopPropagation()
 	event.preventDefault()
-	
-
-	
+		
 	var transferData = event.dataTransfer
 	var files = transferData.files;
 	
-	if( !check(files)) return //security check failed
+	files = check(files);
+	
+	if(files.length ==0) return;
 	
 	handlePicture(files)
 }
@@ -171,11 +185,9 @@ const formUpload = function (event) {
 
 	var files = document.getElementById('fileUploading').files //get files from form
 	
-	if(!check(files)) { //if the check does not go well
-		event.preventDefault
-	} else {
-		handlePicture(files)
-	}
+	files = check(files);
+	
+	if(files.length ==0) return;
 
 }
 

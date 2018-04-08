@@ -64,6 +64,8 @@ function FileUpload(image, file) {
 	xhr.open("POST", "file.php", true);
 	xhr.send(formData);
 	
+	if( xhr.responseText != '') alert(xhr.responseText)
+	
 	image.classList = ["Uploaded"] //so we know this file was uploaded
 
 }
@@ -75,6 +77,7 @@ const sendFiles = function () {
 	
 	var images = document.querySelectorAll(".toBeUploaded") //get all pictures
 
+	alert("images to be uploaded "+images.length);
 	//upload each picture
 	for (var i =0; i< images.length; i++) {
 		new FileUpload(images[i], images[i].file)
@@ -188,6 +191,8 @@ const formUpload = function (event) {
 	files = check(files);
 	
 	if(files.length ==0) return;
+	
+	handlePicture(files)
 
 }
 

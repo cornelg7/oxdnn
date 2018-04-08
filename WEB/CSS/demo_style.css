@@ -12,7 +12,7 @@ LOOK AT STYLE.CSS TO SEE THE SETTINGS COMMON TO ALL PAGES*/
 	height: 20rem;
 	display: block;
 	background-color: blue;
-	overflow: scroll;
+	overflow: auto; /*scroll bar will appear when necessary*/
 }
 
 .dragDrop img {
@@ -39,12 +39,11 @@ form {
 
 /*-------------------------------*/
 
-/* progress bar styles */
+/* run button styles */
 
-progress {
-	width: 50%;
+button {
 	margin-left: 1rem;
-	margin-right: 1rem;
+	margin-bottom: 1rem;
 }
 
 /*------------------------------*/

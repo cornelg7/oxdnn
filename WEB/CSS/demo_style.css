@@ -48,6 +48,15 @@ button {
 
 /*------------------------------*/
 
+/* progress styles */
+
+#progressDiv {
+	padding-left: 1rem;
+	padding-bottom: 1rem;
+}
+
+/*------------------------------*/
+
 
 /* output styles */
 

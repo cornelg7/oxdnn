@@ -1,2 +1,69 @@
 /*THIS FILE CONTAINS THE STYLES FOR THE PAGE "DEMO". 
 LOOK AT STYLE.CSS TO SEE THE SETTINGS COMMON TO ALL PAGES*/
+
+/* drag and drop styles */
+.dragDrop {
+	padding : 2rem;
+	padding-right: 0rem;
+	margin: 1rem;
+	margin-bottom: 2rem;
+	top: 1rem;
+	position: relative;
+	height: 20rem;
+	display: block;
+	background-color: blue;
+	overflow: auto; /*scroll bar will appear when necessary*/
+}
+
+.dragDrop img {
+	width: 4rem;
+	height: 5rem;
+	margin-bottom: 1rem;
+	margin-right: 5rem;
+	float: left;
+}
+
+/*--------------------------*/
+
+/* form style */
+
+form {
+	padding-left: 1rem;
+	padding-right: 1rem;
+	padding-bottom: 1rem;
+}
+
+#fileUploading {
+	width: 13rem;
+}
+
+/*-------------------------------*/
+
+/* run button styles */
+
+button {
+	margin-left: 1rem;
+	margin-bottom: 1rem;
+}
+
+/*------------------------------*/
+
+/* progress styles */
+
+#progressDiv {
+	padding-left: 1rem;
+	padding-bottom: 1rem;
+}
+
+/*------------------------------*/
+
+
+/* output styles */
+
+#outputDiv {
+	padding: 2rem;
+	padding-top: 0.5rem;
+}
+
+
+/*--------------------------------*/

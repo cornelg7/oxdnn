@@ -2,14 +2,23 @@
 <html>
 	<head>
 		<title> Group Project Team 5 - About Us </title>
+		<!-- styles -->
 		<link href="../CSS/style.css" rel="stylesheet" type="text/css" /> 
 		<link href="../CSS/about_us_style.css" rel="stylesheet" type="text/css" /> 
+		<!-- scripts -->
+		<script src="../JS/jquery-3.3.1.min.js"></script>
 	</head>
 
 	<body>
-		<!-- menù at the top of the page-->
-		<nav class = "titleBar" > <ul class = "titleBarButtons"> <li>TITLE</li> <li><a href="./index.html">WHAT?</a></li> <li><a href="./demo.html">DEMO</a></li> <li><a href="./about_us.html">ABOUT US</a></li> </ul> </nav>
-		
+		<!-- menu at the top of the page-->
+		<div id = "title_bar"> Need server for this to show up </div>
+		<!-- script to load the title bar -->
+		<script>
+			$(function(){
+				$("#title_bar").load("title_bar.html"); 
+			});
+		</script> 
+
 		<!-- div which contains the actual text of the page -->
 		<div class="page">
 		

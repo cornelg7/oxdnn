@@ -1,0 +1,21 @@
+{
+  "name": "oxdnn",
+  "version": "1.0.0",
+  "description": "Project for the second year group design practical.",
+  "main": "app.js",
+  "dependencies": {},
+  "devDependencies": {},
+  "scripts": {
+    "start": "nodejs app.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/cornelg7/oxdnn.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/cornelg7/oxdnn/issues"
+  },
+  "homepage": "https://github.com/cornelg7/oxdnn#readme"
+}

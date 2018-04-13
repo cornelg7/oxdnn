@@ -83,21 +83,22 @@ function FileUpload(image, file, total) {
     
     //if something goes wrong
     xhr.onreadystatechange = function() {
-                if (xhr.readyState == 4 && xhr.status != 200) { //4 means DONE; 200 means SUCCESS
-                    alert("something went wrong: "+xhr.responseText+" server status: "+xhr.status);
-                }
+        if (xhr.readyState == 4 && xhr.status != 200) { //4 means DONE; 200 means SUCCESS
+            alert("something went wrong: "+xhr.responseText+" server status: "+xhr.status);
+        }
+        if (xhr.readyState == 4 && xhr.status == 200) {
+			//write the response into a <p></p> in the outputDiv
+        	var paragraph = document.createElement("p")
+			paragraph.innerHTML = xhr.response;
+			document.getElementById('outputDiv').appendChild(paragraph)
+			
+			image.classList = ["Uploaded"] //so we know this file was uploaded
+        }
     };
     
     //here we open the request to upload, the second argument is the .php file to call on the server
-	xhr.open("POST", "../PHP/upload.php", true);
+	xhr.open("POST", "/upload", true);
 	xhr.send(formData);
-	
-	//write the response into a <p></p> in the outputDiv
-	var paragraph = document.createElement("p")
-	paragraph.innerHTML = xhr.response;
-	document.getElementById('outputDiv').appendChild(paragraph)
-	
-	image.classList = ["Uploaded"] //so we know this file was uploaded
 
 }
 

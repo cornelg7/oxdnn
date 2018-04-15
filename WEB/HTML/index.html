@@ -14,26 +14,15 @@
 		<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"></script>
 	</head>
 
-	<body id = "bodyWhat">
-		<!-- menu at the top of the page-->
-		<div id = "title_bar"> Need server for this to show up </div>
-		<!-- script to load the title bar -->
-		<script> $(function(){ $("#title_bar").load("title_bar.html"); }); </script> 
+	<body id="bodyWhat" data-spy="scroll" data-target=".navbar" data-offset="30">
 		
+		<!-- menu at the top of the page + script to load it -->
+		<div id = "title_bar"> Need server for this to show up </div>
+		<script> $(function(){ $("#title_bar").load("title_bar.html"); }); </script> 
+
 		<!-- div which contains the actual text of the page -->
 		<div class="page">
-		
-			<!-- menù inside the page to go to different sections (like wikipedia) -->
-			<nav class = "subMenu"> 
-				<h3> Content </h3>
-				<ul>
-					<li><a href=#WhatIs>What is "Title"?</a></li>
-					<li><a href=#AimProject>Aim of the project</a></li>
-					<li><a href=#TestCases>Test cases</a></li>
-					<li>other stuff</li>
-				</ul>
-			</nav>
-			
+					
 			<!-- section where we describe the applicaition we made-->
 			<section id = "WhatIs" >
 			<h3> What is "name of the app" </h3>

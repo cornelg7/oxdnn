@@ -3,7 +3,10 @@
   "version": "1.0.0",
   "description": "Project for the second year group design practical.",
   "main": "app.js",
-  "dependencies": {},
+  "dependencies": {
+    "busboy": "^0.2.14",
+    "connect-busboy": "0.0.2"
+  },
   "devDependencies": {},
   "scripts": {
     "start": "nodejs app.js"

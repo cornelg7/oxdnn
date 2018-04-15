@@ -49,4 +49,14 @@ section {
 	padding-bottom: 1rem; /*note that this do not sum with padding-top, instead they collapse to the greatest */
 }
 
+body { 
+    padding-top: 30px;
+    position: relative;
+}
+
+.container-fluid {
+    padding-top: 70px;
+    padding-bottom:200px
+}
+
 /*----------------------------*/

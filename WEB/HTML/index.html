@@ -20,34 +20,39 @@
 		<div id = "title_bar"> Need server for this to show up </div>
 		<script> $(function(){ $("#title_bar").load("title_bar.html"); }); </script> 
 
-		<!-- div which contains the actual text of the page -->
-		<div class="page">
-					
-			<!-- section where we describe the applicaition we made-->
-			<section id = "WhatIs" >
-			<h3> What is "name of the app" </h3>
-			<p> bla bla bla<br><br><br><br><br><br><br><br><br></p>
-			</section>
-			
-			<!-- section where we describe the aim of this project-->
-			<section id = "AimProject" >
-			<h3 > Aim of the project </h3>
-			<p> bla bla bla <br><br><br><br><br><br><br><br><br></p>
-			</section>
-			
-			<!-- section where we put some tests -->
-			<section  id = "TestCases">
-			<h3 > Test cases </h3>
-			<p> bla bla bla <br><br><br><br><br><br><br><br><br></p>
-			</section>
-			
-			<!-- section where we put the buttons to the other links -->
-			<section id = "getStarted">
-			<h3> Get the application</h3>
-			<ul> <li><a href=#>Download the app</a></li><li> <a href=demo.html>Try the demo</a></li>  <li><a href="https://github.com/cornelg7/oxdnn" target= "_blank">Find out more</a></li></ul> 
-			</section>
-			
-			
+		<!-- Describing our application -->
+		<div id = "WhatIs" class="container-fluid bg-success" >
+		<h3> What is "name of the app" </h3>
+		<p> bla bla bla</p>
+		</div>
+		
+		<!-- Describing our aims -->
+		<div id = "AimProject" class="container-fluid bg-success" >
+		<h3 > Aim of the project </h3>
+		<p> bla bla bla </p>
+		</div>
+		
+		<!-- Get started: try demo, download app, or learn more about our project -->
+		<div id = "getStarted" class="container-fluid bg-success" >
+		<h3> Get the application</h3>
+		<ul>
+			<li><a href=#>Download the app</a></li>
+			<li><a href=demo.html>Try the demo</a></li>
+			<li><a href="#TestCases">Find out more</a></li>
+		</ul> 
+		</div>
+		
+		<!-- Test cases -->
+		<div id = "TestCases" class="container-fluid bg-success" >
+		<h3 > Test cases </h3>
+		<p> bla bla bla </p>
+		</div>
+
+		<!-- About us -->
+		<div id = "AboutUs" class="container-fluid bg-success" >
+		<h3 > About us </h3>
+		<p> bla bla bla </p>
+		<p> For more check out our <a href="https://github.com/cornelg7/oxdnn"> github</a> </p>
 		</div>
 		
 	</body>

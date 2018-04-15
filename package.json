@@ -11,13 +11,13 @@
   },
   "devDependencies": {},
   "scripts": {
-    "start": "node app.js"
+    "start": "nodejs app.js"
   },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/cornelg7/oxdnn.git"
   },
-  "author": "",
+  "author": "Oxford Team 5",
   "license": "ISC",
   "bugs": {
     "url": "https://github.com/cornelg7/oxdnn/issues"

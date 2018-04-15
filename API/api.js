@@ -24,7 +24,9 @@ router.post('/upload', function(req, res) {
         let fstream = fs.createWriteStream(__dirname + '/temp/' + filename);
         file.pipe(fstream);
         fstream.on('close', function () {
-            fs.unlink(fstream.path);    // just a test
+            fs.unlink(fstream.path, (err) => {
+                if (err) return console.log(err);
+            });
             if (file.truncated) {
                 console.log('Rejected: ' + filename + ' (too large)');
                 return res.status(413).send('The file is too large!');

@@ -1,6 +1,7 @@
 'use strict';
 const express = require('express');
 const fs = require('fs');
+const zerorpc = require("zerorpc");
 const busboy = require('connect-busboy');
 const router = express.Router();
 
@@ -14,9 +15,8 @@ router.use(busboy({
     },
 }));
 
-function generateNNResponse(picture) {
-    return "Possibly accessible";
-}
+const client = new zerorpc.Client();
+client.connect("tcp://127.0.0.1:3773");
 
 router.post('/upload', function(req, res) {
     req.pipe(req.busboy);
@@ -32,8 +32,9 @@ router.post('/upload', function(req, res) {
                 return res.status(413).send('The file is too large!');
             }
             console.log('Accepted: ' + filename);
-            let response = generateNNResponse("File data");
-            res.send(response);
+            client.invoke("evaluate", picture, function(error, response) {
+                res.send(response);
+            });
         });
     });
 });

@@ -59,8 +59,8 @@ body {
 }
 
 .container-fluid {
-    padding-top: 70px;
-    padding-bottom:200px;
+    padding-top: 30px;
+    padding-bottom:20px;
 }
 
 #Footer {
@@ -68,4 +68,8 @@ body {
 	padding-bottom: 40px;
 }
 
+.carousel-inner img {
+	width: 100%;	/* makes the carousel images fully responsive */
+	height: 100%;
+}
 /*----------------------------*/

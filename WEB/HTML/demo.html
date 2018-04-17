@@ -3,43 +3,50 @@
 <html>
 	<head>
 		<title> Group Project Team 5 - Demo </title>
-		<link href="../CSS/style.css" rel="stylesheet" type="text/css" /> 
-		<link href="../CSS/demo_style.css" rel="stylesheet" type="text/css" /> 
-		
+		<meta charset="utf-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1">
+		<!-- styles -->
+		<link href="../CSS/style.css" rel="stylesheet" type="text/css" />
+		<link href="../CSS/demo_style.css" rel="stylesheet" type="text/css" />
+		<link href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" rel="stylesheet">
+		<!-- scripts -->
+		<script src="../JS/jquery-3.3.1.min.js"></script>
+		<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js"></script>
+		<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"></script>
 		<!-- JS function to show/hide the ouptputDiv element-->
-		<script src="../JS/showFunc.js">
-		</script>
-		
+		<script src="../JS/showFunc.js"></script>
 		<!-- There's another JS script at the bottom of the page-->
-		
 	</head>
 
 	<body>
-		<!-- menù at the top of the page-->
-		<nav class = "titleBar" > <ul class = "titleBarButtons"> <li>TITLE</li> <li><a href="./index.html">WHAT?</a></li> <li><a href="./demo.html">DEMO</a></li> <li><a href="./about_us.html">ABOUT US</a></li> </ul> </nav>
-		
-		<!-- div which contains the actual text of the page -->
-		<div class="page">
-		
-		<div class="dragDrop" id ="dropZone">
+		<!-- menu at the top of the page + script to load it -->
+		<div id = "demo_title_bar"> Need server for this to show up </div>
+		<script> $(function(){ $("#demo_title_bar").load("demo_title_bar.html"); }); </script> 
 
+
+		<div class="row">
+			<div class="col-sm-8">
+				<div class="dragDrop" id ="dropZone"> </div>
+			</div>
+
+			<div class="col-sm-4" style="padding-top:30px;">
+				<!--Here is the form to upload a file. We need to link action to a .php or .asp file which will run on the server and write the data collected here into a file-->
+				<form action='' method="post" enctype="multipart/form-data">
+					Select picture to upload 
+					<input type="file" name="photos[]" id="fileUploading" multiple accept="image/*"> 
+				<!--	<input type="submit" name="submit" value="Upload"> -->
+					Size limit: 10 MB
+				</form>	
+			</div>
 		</div>
 		
-		<!--Here is the form to upload a file. We need to link action to a .php or .asp file which will run on the server and write the data collected here into a file-->
-		<form action='' method="post" enctype="multipart/form-data">
-			Select picture to upload 
-			<input type="file" name="photos[]" id="fileUploading" multiple accept="image/*"> 
- 	 	<!--	<input type="submit" name="submit" value="Upload"> -->
- 	 		Size limit: 10 MB
- 	 	</form>	
- 	 	 
  	 	 
  	 	<button id="RunButton" onclick="show('outputDiv')">Try the demo </button>
 		
-		<div id="progressDiv">
+
+		<div id="progressDiv"> </div>
 		
-		</div>
-		
+
 		<div id="outputDiv" style = "display:none">
 			<h3> Output : </h3>
 			<p> bla bla bla
@@ -47,12 +54,13 @@
 		</div>
 		
 		
-		</div>
-
 		<!-- JS to check what file is being uploaded-->
 		<!-- The script needs to be here so it can access the form element defined above-->
-		<script src="../JS/Upload.js">
-		</script>
-		
+		<script src="../JS/Upload.js"> </script>
+
+
+		<!-- footer -->
+		<footer id="Footer" class="footer text-white bg-dark"> </footer>
+		<script> $(function(){ $("#Footer").load("footer.html"); }); </script> 		
 	</body>
 </html>

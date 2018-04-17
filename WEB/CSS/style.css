@@ -60,7 +60,12 @@ body {
 
 .container-fluid {
     padding-top: 70px;
-    padding-bottom:200px
+    padding-bottom:200px;
+}
+
+#Footer {
+	padding-top: 10px;
+	padding-bottom: 40px;
 }
 
 /*----------------------------*/

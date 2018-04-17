@@ -11,7 +11,7 @@ LOOK AT STYLE.CSS TO SEE THE SETTINGS COMMON TO ALL PAGES*/
 	position: relative;
 	height: 20rem;
 	display: block;
-	background-color: blue;
+	background-color: rgb(44, 131, 209);
 	overflow: auto; /*scroll bar will appear when necessary*/
 }
 

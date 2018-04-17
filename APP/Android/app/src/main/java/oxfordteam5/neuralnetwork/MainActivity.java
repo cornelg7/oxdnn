@@ -4,6 +4,7 @@ import android.Manifest;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.net.Uri;
+import android.os.AsyncTask;
 import android.os.Environment;
 import android.os.Handler;
 import android.provider.MediaStore;
@@ -102,7 +103,6 @@ public class MainActivity extends AppCompatActivity {
         File image = null;
         try {
             image= File.createTempFile("IMG", ".jpg", storageDir);
-
         } catch (IOException e) {
             errorMessage.setVisibility(View.VISIBLE);
             Log.e("error", Log.getStackTraceString(e));
@@ -194,75 +194,11 @@ public class MainActivity extends AppCompatActivity {
             return;
         }
 
+        Intent ResultIntent = new Intent(MainActivity.this, ResultActivity.class);
+        ResultIntent.putExtra("path", Image.getAbsolutePath());
+        ResultIntent.putExtra("name", Image.getName());
+        startActivity(ResultIntent);
 
-        int serverResponseCode;
-        String serverResponseMessage;
-
-        // SEND IMAGE TO SERVER
-        try {
-
-            //ESTABLISH THE CONNECTION
-            URL url = new URL ("url to php file on server");
-            HttpURLConnection connection = (HttpURLConnection) url.openConnection();
-            connection.setReadTimeout(15000 /* milliseconds */);
-            connection.setConnectTimeout(15000 /* milliseconds */);
-            connection.setRequestMethod("POST");
-            connection.setDoInput(true);
-            connection.setDoOutput(true);
-            connection.setUseCaches(false);
-            connection.setRequestProperty("Connection", "Keep-Alive");
-            connection.setRequestProperty("ENCTYPE", "multipart/form-data");
-            connection.setRequestProperty("Content-Type", "multipart/form-data;");
-            connection.setRequestProperty("uploaded_file",Image.getAbsolutePath());
-
-            //WRITE THE FILE TO THE OUTPUTSTREAM OF THE CONNECTION
-            DataOutputStream DataOutput = new DataOutputStream(connection.getOutputStream()); //get outputstream where to write the file
-            FileInputStream readData = new FileInputStream(Image.getAbsolutePath()); //get input stream to read the file
-
-            //write the header of the data to send (send it as a html form)
-            DataOutput.writeBytes("--" + "*****" + "\r\n");
-            DataOutput.writeBytes("Content-Disposition: form-data; name=\"uploaded_file\";filename=\""+ Image.getName() + "\"" + "\r\n");
-            DataOutput.writeBytes("\r\n");
-
-            //create and array of bytes as buffer (max size = 1MB)
-            int bufferSize = bufferSize = Math.min(readData.available(),1024*1024*1);
-
-            byte[] buffer = new byte[bufferSize]; //create buffer
-
-            int bytesToRead = readData.read(buffer,0,bufferSize); //bytes that needs reading
-
-            while (bytesToRead > 0){ //until there are bytes to read
-                DataOutput.write(buffer,0,bufferSize); //write bytes to connection
-                bufferSize = Math.min(readData.available(),1024*1024*1); //update the buffer size
-                bytesToRead = readData.read(buffer,0,bufferSize); //read other bytes
-            }
-
-            //write end of the form
-            DataOutput.writeBytes("\r\n");
-            DataOutput.writeBytes("--" + "*****" + "--" + "\r\n");
-
-            //GET RESPONSE FROM SERVER
-            serverResponseCode = connection.getResponseCode();
-            serverResponseMessage = connection.getResponseMessage();
-
-            //CLOSE EVERYTHING
-            readData.close();
-            DataOutput.flush();
-            DataOutput.close();
-
-        } catch (Exception e) {
-            e.printStackTrace();
-            return;
-        }
-
-        if(serverResponseCode == 200) { //everything is OK
-            Intent goToResults = new Intent(MainActivity.this, ResultActivity.class);
-            goToResults.putExtra("serverMessage", serverResponseMessage);
-            MainActivity.this.startActivity(goToResults);
-        }
-        else {
-            Log.i("UploadError", "Server Response is: " + serverResponseMessage + ": " + serverResponseCode);
-        }
 
 
     }
@@ -276,6 +212,13 @@ public class MainActivity extends AppCompatActivity {
         startActivity(OptionsIntent);
     }
 
+    public void SleepMode (View view) {
+        Intent sleepIntent = new Intent(MainActivity.this, SleepActivity.class);
+        sleepIntent.putExtra("save", saveImages);
+        sleepIntent.putExtra("private",privateImages);
+        startActivity(sleepIntent);
+    }
+
     @Override
     public void onDestroy() { //when the app is getting killed
 
@@ -284,6 +227,8 @@ public class MainActivity extends AppCompatActivity {
             Image = null;
         }
 
+        Intent intent = new Intent(this, SleepService.class);
+        stopService(intent);
         super.onDestroy();
     }
 
@@ -474,4 +419,9 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
+
+
+
 }
+
+

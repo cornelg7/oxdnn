@@ -34,6 +34,10 @@ LOOK AT OTHER FILE FOR MORE SPECIFIC SETTINGS*/
 	background-color: red;
 }
 
+.row {
+	padding-bottom: 25px;
+}
+
 /*--------------------------*/
 
 
@@ -49,4 +53,23 @@ section {
 	padding-bottom: 1rem; /*note that this do not sum with padding-top, instead they collapse to the greatest */
 }
 
+body { 
+    padding-top: 30px;
+    position: relative;
+}
+
+.container-fluid {
+    padding-top: 30px;
+    padding-bottom:20px;
+}
+
+#Footer {
+	padding-top: 10px;
+	padding-bottom: 40px;
+}
+
+.carousel-inner img {
+	width: 100%;	/* makes the carousel images fully responsive */
+	height: 100%;
+}
 /*----------------------------*/

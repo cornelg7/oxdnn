@@ -3,54 +3,45 @@
 	<head>
 		<title> Group Project Team 5 </title>
 		<meta charset="utf-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1">
+		<!-- styles -->
 		<link href="../CSS/style.css" rel="stylesheet" type="text/css" />
-		<link href="../CSS/what_style.css" rel="stylesheet" type="text/css" /> 
+		<link href="../CSS/what_style.css" rel="stylesheet" type="text/css" />
+		<link href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" rel="stylesheet">
+		<!-- scripts -->
+		<script src="../JS/jquery-3.3.1.min.js"></script>
+		<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js"></script>
+		<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"></script>
 	</head>
 
-	<body id = "bodyWhat">
-		<!-- menù at the top of the page-->
-		<nav class = "titleBar" > <ul class = "titleBarButtons"> <li>TITLE</li> <li><a href="./index.html" >WHAT?</a></li> <li><a href="./demo.html">DEMO</a></li> <li><a href="./about_us.html">ABOUT US</a></li> </ul> </nav>
+	<body id="bodyWhat" data-spy="scroll" data-target=".navbar" data-offset="30">
 		
-		<!-- div which contains the actual text of the page -->
-		<div class="page">
+		<!-- menu at the top of the page + script to load it -->
+		<div id = "title_bar"> </div>
+		<script> $(function(){ $("#title_bar").load("index_title_bar.html"); }); </script> 
+
+		<!-- Describing our application -->
+		<div id = "WhatIs" class="container"> </div>
+		<script> $(function(){ $("#WhatIs").load("index_WhatIs.html"); }); </script> 
 		
-			<!-- menù inside the page to go to different sections (like wikipedia) -->
-			<nav class = "subMenu"> 
-				<h3> Content </h3>
-				<ul>
-					<li><a href=#WhatIs>What is "Title"?</a></li>
-					<li><a href=#AimProject>Aim of the project</a></li>
-					<li><a href=#TestCases>Test cases</a></li>
-					<li>other stuff</li>
-				</ul>
-			</nav>
-			
-			<!-- section where we describe the applicaition we made-->
-			<section id = "WhatIs" >
-			<h3> What is "name of the app" </h3>
-			<p> bla bla bla<br><br><br><br><br><br><br><br><br></p>
-			</section>
-			
-			<!-- section where we describe the aim of this project-->
-			<section id = "AimProject" >
-			<h3 > Aim of the project </h3>
-			<p> bla bla bla <br><br><br><br><br><br><br><br><br></p>
-			</section>
-			
-			<!-- section where we put some tests -->
-			<section  id = "TestCases">
-			<h3 > Test cases </h3>
-			<p> bla bla bla <br><br><br><br><br><br><br><br><br></p>
-			</section>
-			
-			<!-- section where we put the buttons to the other links -->
-			<section id = "getStarted">
-			<h3> Get the application</h3>
-			<ul> <li><a href=#>Download the app</a></li><li> <a href=demo.html>Try the demo</a></li>  <li><a href="https://github.com/cornelg7/oxdnn" target= "_blank">Find out more</a></li></ul> 
-			</section>
-			
-			
-		</div>
+		<!-- Describing our aims -->
+		<div id = "AimProject" class="container"> </div>
+		<script> $(function(){ $("#AimProject").load("index_AimProject.html"); }); </script> 
 		
+		<!-- Get started: try demo, download app, or learn more about our project -->
+		<div id = "GetStarted" class="container"> </div>
+		<script> $(function(){ $("#GetStarted").load("index_GetStarted.html"); }); </script> 
+		
+		<!-- Test cases -->
+		<div id = "TestCases" class="container"> </div>
+		<script> $(function(){ $("#TestCases").load("index_TestCases.html"); }); </script> 
+
+		<!-- About us -->
+		<div id = "AboutUs" class="container"> </div>
+		<script> $(function(){ $("#AboutUs").load("index_AboutUs.html"); }); </script> 
+		
+		<!-- Footer -->
+		<footer id="Footer" class="footer text-white bg-dark"> </footer>
+		<script> $(function(){ $("#Footer").load("footer.html"); }); </script> 
 	</body>
 </html>

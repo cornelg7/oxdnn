@@ -24,17 +24,22 @@
 		<script> $(function(){ $("#demo_title_bar").load("demo_title_bar.html"); }); </script> 
 
 
-		<div class="dragDrop" id ="dropZone"> </div>
-		
+		<div class="row">
+			<div class="col-sm-8">
+				<div class="dragDrop" id ="dropZone"> </div>
+			</div>
 
-		<!--Here is the form to upload a file. We need to link action to a .php or .asp file which will run on the server and write the data collected here into a file-->
-		<form action='' method="post" enctype="multipart/form-data">
-			Select picture to upload 
-			<input type="file" name="photos[]" id="fileUploading" multiple accept="image/*"> 
- 	 	<!--	<input type="submit" name="submit" value="Upload"> -->
- 	 		Size limit: 10 MB
- 	 	</form>	
- 	 	 
+			<div class="col-sm-4" style="padding-top:30px;">
+				<!--Here is the form to upload a file. We need to link action to a .php or .asp file which will run on the server and write the data collected here into a file-->
+				<form action='' method="post" enctype="multipart/form-data">
+					Select picture to upload 
+					<input type="file" name="photos[]" id="fileUploading" multiple accept="image/*"> 
+				<!--	<input type="submit" name="submit" value="Upload"> -->
+					Size limit: 10 MB
+				</form>	
+			</div>
+		</div>
+		
  	 	 
  	 	<button id="RunButton" onclick="show('outputDiv')">Try the demo </button>
 		

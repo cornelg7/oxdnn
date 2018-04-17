@@ -13,7 +13,7 @@
   },
   "devDependencies": {},
   "scripts": {
-    "start": "nodejs app.js"
+    "start": "(python3 ML/network_server.py) & nodejs app.js"
   },
   "repository": {
     "type": "git",

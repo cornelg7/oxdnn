@@ -3,6 +3,7 @@ package oxfordteam5.neuralnetwork;
 import android.Manifest;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.database.Cursor;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Environment;
@@ -42,6 +43,7 @@ public class MainActivity extends AppCompatActivity {
     ImageView mImageView;
     TextView errorMessage;
     File Image = null; //always store the last image taken since app is launched (is no image the content is null)
+    String photoDir = null;
     static  Boolean saveImages; //saveImages tells if the user wants to keep the pictures it takes
     //if saveImages is false; then privateImmages is true
     static Boolean privateImages; //this tells if the user want to save the picture in the public directory or not
@@ -150,6 +152,8 @@ public class MainActivity extends AppCompatActivity {
                 Image = publicImage;
             }
 
+            photoDir = Image.getAbsolutePath();
+
             //load image
             if(Image == null) {
                 errorMessage.setVisibility(View.VISIBLE);
@@ -174,6 +178,22 @@ public class MainActivity extends AppCompatActivity {
             }
 
             Uri photoURI = data.getData();
+
+            //the code below gets the actual path of the image and stores it into photoDir
+            Cursor cursor = null;
+            try {
+                String[] proj = { MediaStore.Images.Media.DATA };
+                cursor = this.getContentResolver().query(photoURI,  proj, null, null, null);
+                int column_index = cursor.getColumnIndexOrThrow(MediaStore.Images.Media.DATA);
+                cursor.moveToFirst();
+                photoDir = cursor.getString(column_index);
+            } finally {
+                if (cursor != null) {
+                    cursor.close();
+                }
+            }
+
+            //now get a file and set the image view
             Image = new File (photoURI.toString());
             mImageView.setImageURI(photoURI);
             mImageView.setVisibility(View.VISIBLE);
@@ -195,7 +215,7 @@ public class MainActivity extends AppCompatActivity {
         }
 
         Intent ResultIntent = new Intent(MainActivity.this, ResultActivity.class);
-        ResultIntent.putExtra("path", Image.getAbsolutePath());
+        ResultIntent.putExtra("path", photoDir);
         ResultIntent.putExtra("name", Image.getName());
         startActivity(ResultIntent);
 

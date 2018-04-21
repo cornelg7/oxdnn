@@ -2,16 +2,23 @@ package oxfordteam5.neuralnetwork;
 
 import android.content.Intent;
 import android.os.AsyncTask;
+import android.provider.MediaStore;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
 import android.widget.TextView;
 
-import java.io.DataOutputStream;
 import java.io.File;
-import java.io.FileInputStream;
-import java.net.HttpURLConnection;
-import java.net.URL;
+import java.io.IOException;
+import java.util.concurrent.TimeUnit;
+
+import okhttp3.MediaType;
+import okhttp3.MultipartBody;
+import okhttp3.OkHttpClient;
+import okhttp3.Request;
+import okhttp3.RequestBody;
+import okhttp3.Response;
+import okhttp3.ResponseBody;
 
 public class ResultActivity extends AppCompatActivity {
 
@@ -46,90 +53,58 @@ public class ResultActivity extends AppCompatActivity {
             if(path == "" || path == null) return "error";
             if(name == "" || name == null) return "error";
 
-            int serverResponseCode;
-            String serverResponseMessage;
+            final MediaType Img = MediaType.parse("image/jpg");
 
-            // SEND IMAGE TO SERVER
+            OkHttpClient.Builder cBuilder = new OkHttpClient.Builder();
+            cBuilder.readTimeout(20000, TimeUnit.MILLISECONDS);
+            cBuilder.writeTimeout(10, TimeUnit.MINUTES);
+            cBuilder.connectTimeout(20000, TimeUnit.MILLISECONDS);
+
+            OkHttpClient client = cBuilder.build();
+
+            RequestBody file_body = RequestBody.create(Img,new File(path));
+            RequestBody body = new MultipartBody.Builder()
+                    .setType(MultipartBody.FORM)
+                    .addFormDataPart("type","image/jpg")
+                    .addFormDataPart("picture", name+".jpg", file_body)
+                    .build();
+
+
+            Request request = new Request.Builder()
+                    //.url("http://10.0.2.2/~ivomaffei/Oxford/WEB/PHP/upload.php")
+                    .url("http://oxdnn.azurewebsites.net/upload")
+                    .post(body)
+                    //.url("http://10.0.2.2/~ivomaffei/Oxford/WEB/PHP/prova.txt")
+                    .build();
+
+            Response response = null;
             try {
+                response = client.newCall(request).execute();
+            } catch (IOException e) {
+                e.printStackTrace();
+                Log.e("ERROR", "cannot send stuff; response :"+response.toString());
+            }
 
-                //ESTABLISH THE CONNECTION
-                URL url = new URL ("https://oxdnn.azurewebsites.net/upload");
-                HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+            ResponseBody responseBody = response.body();
 
-                connection.setReadTimeout(15000 /* milliseconds */);
-                connection.setConnectTimeout(15000 /* milliseconds */);
-                connection.setRequestMethod("POST");
-                connection.setDoInput(true);
-                connection.setDoOutput(true);
-                connection.setUseCaches(false);
-                connection.setRequestProperty("Connection", "Keep-Alive");
-                connection.setRequestProperty("ENCTYPE", "multipart/form-data");
-                connection.setRequestProperty("Content-Type", "multipart/form-data;");
-                connection.setRequestProperty("uploaded_file",path);
+            long length =0;
+            try {
+                length = request.body().contentLength();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
 
-                //GET RESPONSE FROM SERVER
-                serverResponseCode = connection.getResponseCode();
-                serverResponseMessage = connection.getResponseMessage();
-                if(serverResponseCode == 200) { //everything is OK
-                    displayMessage("connectiod enstablished");
-                }
-                else {
-                    Log.i("UploadError", "Server Response is: " + serverResponseMessage + ": " + serverResponseCode);
-                    return "upload failed";
-                }
-
-                //WRITE THE FILE TO THE OUTPUTSTREAM OF THE CONNECTION
-                DataOutputStream DataOutput = new DataOutputStream(connection.getOutputStream()); //get outputstream where to write the file
-                FileInputStream readData = new FileInputStream(path); //get input stream to read the file
-
-                //write the header of the data to send (send it as a html form)
-                DataOutput.writeBytes("--" + "*****" + "\r\n");
-                DataOutput.writeBytes("Content-Disposition: form-data; name=\"uploaded_file\";filename=\""+ name + "\"" + "\r\n");
-                DataOutput.writeBytes("\r\n");
-
-                //create and array of bytes as buffer (max size = 1MB)
-                int bufferSize = bufferSize = Math.min(readData.available(),1024*1024*1);
-
-                byte[] buffer = new byte[bufferSize]; //create buffer
-
-                int bytesToRead = readData.read(buffer,0,bufferSize); //bytes that needs reading
-
-                while (bytesToRead > 0){ //until there are bytes to read
-                    DataOutput.write(buffer,0,bufferSize); //write bytes to connection
-                    bufferSize = Math.min(readData.available(),1024*1024*1); //update the buffer size
-                    bytesToRead = readData.read(buffer,0,bufferSize); //read other bytes
-                }
-
-                //write end of the form
-                DataOutput.writeBytes("\r\n");
-                DataOutput.writeBytes("--" + "*****" + "--" + "\r\n");
-
-                //GET RESPONSE FROM SERVER
-                serverResponseCode = connection.getResponseCode();
-                serverResponseMessage = connection.getResponseMessage();
-
-                //CLOSE EVERYTHING
-                readData.close();
-                DataOutput.flush();
-                DataOutput.close();
-
+            try {
+                return /*response.body().string() +"\n"+*/response.toString()+"\n request method: "+request.method()+" request body length: "+length+" conent type: "+request.body().contentType().toString()+" \n";
+                //return  response.body().string();
             } catch (Exception e) {
                 e.printStackTrace();
-                return "exception occurred";
             }
-
-            if(serverResponseCode == 200) { //everything is OK
-                return "upload complete successfully";
-            }
-            else {
-                Log.i("UploadError", "Server Response is: " + serverResponseMessage + ": " + serverResponseCode);
-                return "upload failed";
-            }
-
+            return "nono";
         }
 
         protected void onProgressUpdate(Integer... progress) {
-            displayMessage("uploading... " + progress[0]+"% completed");
+           // displayMessage("uploading... " + progress[0]+"% completed");
         }
 
         protected void onPostExecute(String result) {

@@ -1,6 +1,7 @@
 package oxfordteam5.neuralnetwork;
 
 import android.content.Intent;
+import android.content.pm.ActivityInfo;
 import android.os.AsyncTask;
 import android.provider.MediaStore;
 import android.support.v7.app.AppCompatActivity;
@@ -22,13 +23,16 @@ import okhttp3.ResponseBody;
 
 public class ResultActivity extends AppCompatActivity {
 
-    TextView message = null;
+    static TextView message = null;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_result);
         message = findViewById(R.id.textView2);
+
+        setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
+
         Intent start = getIntent();
         String path = start.getStringExtra("path");
         String name = start.getStringExtra("name");
@@ -37,12 +41,12 @@ public class ResultActivity extends AppCompatActivity {
         new UploadFile().execute(path,name);
     }
 
-    void displayMessage(String text) {
+    static void displayMessage(String text) {
         message.setText(text);
     }
 
 
-    private class UploadFile extends AsyncTask<String, Integer, String> {
+    static private class UploadFile extends AsyncTask<String, Integer, String> {
 
         @Override
         protected String doInBackground(String... files) {
@@ -71,10 +75,9 @@ public class ResultActivity extends AppCompatActivity {
 
 
             Request request = new Request.Builder()
-                    //.url("http://10.0.2.2/~ivomaffei/Oxford/WEB/PHP/upload.php")
-                    .url("http://oxdnn.azurewebsites.net/upload")
+                    .url("http://oxdnn-testing1.azurewebsites.net/upload")
+                    //.url("http://oxdnn.azurewebsites.net/upload")
                     .post(body)
-                    //.url("http://10.0.2.2/~ivomaffei/Oxford/WEB/PHP/prova.txt")
                     .build();
 
             Response response = null;
@@ -95,7 +98,7 @@ public class ResultActivity extends AppCompatActivity {
             }
 
             try {
-                return /*response.body().string() +"\n"+*/response.toString()+"\n request method: "+request.method()+" request body length: "+length+" conent type: "+request.body().contentType().toString()+" \n";
+                return response.body().string() +"\n"+response.toString()+"\n request method: "+request.method()+" request body length: "+length+" conent type: "+request.body().contentType().toString()+" \n";
                 //return  response.body().string();
             } catch (Exception e) {
                 e.printStackTrace();

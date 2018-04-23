@@ -26,7 +26,7 @@
         android:layout_marginStart="8dp"
         android:layout_marginTop="64dp"
         android:adjustViewBounds="true"
-        android:cropToPadding="false"
+        android:cropToPadding="true"
         android:scaleType="centerInside"
         android:visibility="invisible"
         app:layout_constraintBottom_toTopOf="@+id/grid"
@@ -74,7 +74,7 @@
 
             <Button
                 android:id="@+id/camera"
-                android:layout_width="150dp"
+                android:layout_width="160dp"
                 android:layout_height="wrap_content"
                 android:onClick="dispatchTakePictureIntent"
                 android:text="Open Camera" />
@@ -86,7 +86,7 @@
 
             <Button
                 android:id="@+id/instantPicture"
-                android:layout_width="150dp"
+                android:layout_width="160dp"
                 android:layout_height="wrap_content"
                 android:onClick="takePicture"
                 android:text="Take Picture" />
@@ -103,7 +103,7 @@
 
             <Button
                 android:id="@+id/gallery"
-                android:layout_width="150dp"
+                android:layout_width="160dp"
                 android:layout_height="wrap_content"
                 android:onClick="takePictureFromGalleryIntent"
                 android:text="GALLERY" />
@@ -116,7 +116,7 @@
 
             <Button
                 android:id="@+id/sleepMode"
-                android:layout_width="150dp"
+                android:layout_width="160dp"
                 android:layout_height="wrap_content"
                 android:onClick="SleepMode"
                 android:text="SleepMode" />

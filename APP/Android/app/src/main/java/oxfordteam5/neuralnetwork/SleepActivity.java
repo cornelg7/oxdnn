@@ -3,6 +3,7 @@ package oxfordteam5.neuralnetwork;
 import android.Manifest;
 import android.app.Service;
 import android.content.Intent;
+import android.content.pm.ActivityInfo;
 import android.content.pm.PackageManager;
 import android.hardware.Camera;
 import android.net.Uri;
@@ -27,7 +28,6 @@ public class SleepActivity extends AppCompatActivity {
     Camera myCamera;
     Boolean saveImages;
     Boolean privateImages;
-    File lastPicture;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -37,11 +37,11 @@ public class SleepActivity extends AppCompatActivity {
         message.setText("You can now lock the the screen");
         myCamera = null;
 
+        setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
         Intent start = getIntent();
         saveImages = start.getBooleanExtra("save",true);
         privateImages = start.getBooleanExtra("private", false);
 
-        lastPicture = null;
         askPermissions(112);
 
         Intent intent = new Intent(this, SleepService.class);
@@ -51,73 +51,6 @@ public class SleepActivity extends AppCompatActivity {
 
     }
 
-
-    public void TakePicture(View view) {
-        if(!saveImages && lastPicture != null) {
-            if(lastPicture.exists()) lastPicture.delete();
-            lastPicture= null;
-        }
-
-        if(myCamera != null) {
-            myCamera.release();
-            myCamera = null;
-        }
-
-        try {
-            myCamera = Camera.open();
-        } catch (Exception e) {
-            Log.e(getString(R.string.app_name), "failed to open Camera");
-            return;
-        }
-
-        try {
-            myCamera.takePicture(null, null, myPicture);
-        } catch (Exception e) {
-            Log.e(getString(R.string.app_name), "failed to open Camera");
-            return;
-        }
-
-    }
-
-    private Camera.PictureCallback myPicture = new Camera.PictureCallback() {
-
-        @Override
-        public void onPictureTaken(byte[] bytes, Camera camera) {
-            File picture;
-            File storageDir;
-            if(privateImages) storageDir = getExternalFilesDir(Environment.DIRECTORY_PICTURES);
-            else storageDir = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES);
-
-            try {
-                picture = File.createTempFile("IMG", ".jpg", storageDir);
-            } catch (IOException e) {
-                e.printStackTrace();
-                Log.e(getString(R.string.app_name), "failed to create file for picture taken");
-                return;
-            }
-
-            lastPicture = picture; //lastPicture was deleted before taking the picture
-
-            try {
-                FileOutputStream output = new FileOutputStream(picture);
-                output.write(bytes);
-                output.close();
-            } catch (IOException e) {
-                e.printStackTrace();
-                Log.e(getString(R.string.app_name), "failed to write data to the picture file");
-                return;
-            }
-
-            if(!privateImages) { //update gallery to add image
-                Intent mediaScanIntent = new Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE);
-                Uri contentUri = Uri.fromFile(picture);
-                mediaScanIntent.setData(contentUri);
-                SleepActivity.this.sendBroadcast(mediaScanIntent);
-            }
-            //here we send the file to the server
-        }
-    };
-
     private boolean askPermissions(int code) {
         if (ContextCompat.checkSelfPermission(SleepActivity.this,
                 Manifest.permission.CAMERA)
@@ -125,17 +58,6 @@ public class SleepActivity extends AppCompatActivity {
 
             ActivityCompat.requestPermissions(SleepActivity.this,
                     new String[]{Manifest.permission.CAMERA},
-                    code);
-
-            return false;
-
-        }
-        if (ContextCompat.checkSelfPermission(SleepActivity.this,
-                Manifest.permission.WAKE_LOCK)
-                != PackageManager.PERMISSION_GRANTED) {
-
-            ActivityCompat.requestPermissions(SleepActivity.this,
-                    new String[]{Manifest.permission.WAKE_LOCK},
                     code);
 
             return false;
@@ -173,7 +95,7 @@ public class SleepActivity extends AppCompatActivity {
             if( askPermissions(113)) return;
         }
         else {
-            message.setText("app cannot run without permission; \n Closing ina few seconds");
+            message.setText("app cannot run without permission; \n Closing in a few seconds");
             Handler handler = new Handler();
             handler.postDelayed(new Runnable() {
                 public void run() {
@@ -183,13 +105,11 @@ public class SleepActivity extends AppCompatActivity {
         }
     }
 
+    @Override
     public void onDestroy() { //when the app is getting killed
 
-        if(!saveImages && lastPicture != null) { //delete images; images are private
-            if (lastPicture.exists()) lastPicture.delete();
-            lastPicture = null;
-        }
-
+        Intent intent = new Intent(this, SleepService.class);
+        stopService(intent);
         super.onDestroy();
     }
 }

@@ -10,6 +10,7 @@ import android.graphics.BitmapFactory;
 import android.graphics.Matrix;
 import android.graphics.SurfaceTexture;
 import android.hardware.Camera;
+import android.media.ExifInterface;
 import android.net.Uri;
 import android.os.Environment;
 import android.os.Handler;
@@ -335,20 +336,46 @@ public class MainActivity extends AppCompatActivity {
             settings.inJustDecodeBounds = false;
             Bitmap ScaledBitmap = BitmapFactory.decodeFile(photoDir, settings); //this time the bitmap is returned
             Bitmap bitmap = null;
+
             if( rotateBitmap ){
                 Boolean scrennWider = mImageView.getWidth() > mImageView.getHeight();
                 Boolean imageWider = ScaledBitmap.getWidth() > ScaledBitmap.getHeight();
                 if( scrennWider != imageWider) { //then rotate
                     //create rotation matrix
                     Matrix matrix = new Matrix();
-                    matrix.postRotate(90);
+                    matrix.postRotate(-90);
 
                     //rotate
-                    bitmap = ScaledBitmap.createBitmap(ScaledBitmap, 0, 0, ScaledBitmap.getWidth(),ScaledBitmap.getHeight(), matrix, true);
+                    bitmap = Bitmap.createBitmap(ScaledBitmap, 0, 0, ScaledBitmap.getWidth(),ScaledBitmap.getHeight(), matrix, true);
+                }
+                else { //no rotation needed
+                    bitmap = ScaledBitmap;
                 }
             }
             else {
-                bitmap = ScaledBitmap;
+                //get orientation of the picture
+                ExifInterface exif = null;
+                try {
+                    exif = new ExifInterface(photoDir);
+                } catch (IOException e) {
+                    Log.e("NeuralNetwork", "error with ExifInterface");
+                    e.printStackTrace();
+                    return;
+                }
+                int orientation = exif.getAttributeInt(ExifInterface.TAG_ORIENTATION, ExifInterface.ORIENTATION_NORMAL);
+
+                //rotate to real orientation
+                Matrix matrix = new Matrix();
+                if (orientation == 6) {
+                    matrix.postRotate(90);
+                }
+                else if (orientation == 3) {
+                    matrix.postRotate(180);
+                }
+                else if (orientation == 8) {
+                    matrix.postRotate(270);
+                }
+                bitmap = Bitmap.createBitmap(ScaledBitmap, 0, 0, ScaledBitmap.getWidth(),ScaledBitmap.getHeight(), matrix, true);
             }
             errorMessage.setVisibility(View.INVISIBLE);
             mImageView.setVisibility(View.VISIBLE);
@@ -416,13 +443,14 @@ public class MainActivity extends AppCompatActivity {
         }
 
         for (int i=0; i<2; ++i) {
+
             line = read.readLine();
             if(line.equals("true")) {
-                if(i==1) rotateBitmap = true;
+                if(i==0) rotateBitmap = true;
                 else focusCamera = true;
             }
             else if (line.equals("false")) {
-                if(i==1) rotateBitmap = false;
+                if(i==0) rotateBitmap = false;
                 else focusCamera = false;
             }
         }

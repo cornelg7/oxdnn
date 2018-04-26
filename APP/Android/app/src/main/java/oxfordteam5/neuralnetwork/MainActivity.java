@@ -392,7 +392,7 @@ public class MainActivity extends AppCompatActivity {
         }
 
         //close the sleep service
-        Intent intent = new Intent(this, MediaServiceSleep.class);
+        Intent intent = new Intent(this, SleepService.class);
         stopService(intent);
 
         super.onDestroy();
@@ -433,8 +433,6 @@ public class MainActivity extends AppCompatActivity {
      //   if(line == null || line.equals("") ) return; //tempfile is empty
 
         for (int i=0; i<3; ++i) {
-
-            Log.i("NeuralNetwork", "line "+i);
             line = read.readLine();
             if(line.equals("true")) {
                 if (i== 0) saveImages = true;

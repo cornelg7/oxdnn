@@ -58,19 +58,23 @@
                 android:resource="@xml/file_paths" />
         </provider>
 
-        <service
-            android:name=".MediaServiceSleep"
+        <receiver
+            android:name=".SleepReceiver"
             android:enabled="true"
             android:exported="true">
-            <intent-filter>
-                <action android:name="android.media.browse.MediaBrowserService" />
-            </intent-filter>
-        </service>
-        <receiver android:name="android.support.v4.media.session.MediaButtonReceiver">
-            <intent-filter>
-                <action android:name="android.intent.action.MEDIA_BUTTON"/>
+            <intent-filter android:priority="100000">
+                <action android:name="android.intent.action.BOOT_COMPLETED" />
+                <action android:name="android.intent.action.MEDIA_BUTTON" />
             </intent-filter>
         </receiver>
+
+        <service
+            android:name=".SleepService"
+            android:exported="true" >
+        <intent-filter>
+            <action android:name="android.intent.action.MEDIA_BUTTON" />
+        </intent-filter>
+        </service>
     </application>
 
 </manifest>

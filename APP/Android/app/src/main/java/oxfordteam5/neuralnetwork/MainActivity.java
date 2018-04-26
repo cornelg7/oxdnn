@@ -56,8 +56,6 @@ public class MainActivity extends AppCompatActivity {
 
     //SETTINGS VARIABLES
     static  Boolean saveImages; //saveImages tells if the user wants to keep the pictures it takes
-    //if saveImages is false; then privateImmages is true
-    static Boolean privateImages; //this tells if the user want to save the picture in the public directory or not
     static Boolean rotateBitmap; //true to rotate image when displaying them in the mImageView
     static Boolean focusCamera; //true to make the camera focus when taking instant pictures
     static File saveFile = null; //file where we save the settings
@@ -81,12 +79,11 @@ public class MainActivity extends AppCompatActivity {
         if( !saveFile.exists()) { //if there is no file
             try {
                 saveFile.createNewFile();
-                writeOptions(true,false, true, true);
+                writeOptions(true, true, true);
             } catch (IOException e) {
                 return;
             }
             saveImages = true;
-            privateImages = false;
             focusCamera = true;
             rotateBitmap = true;
         } else { //if there is file
@@ -242,7 +239,6 @@ public class MainActivity extends AppCompatActivity {
         changedOptions = true;
         Intent OptionsIntent = new Intent(MainActivity.this, OptionsActivity.class);
         OptionsIntent.putExtra("saveImages", saveImages);
-        OptionsIntent.putExtra("privateImages", privateImages);
         OptionsIntent.putExtra("rotateBitmap", rotateBitmap);
         OptionsIntent.putExtra("focusCamera", focusCamera);
         startActivity(OptionsIntent);
@@ -252,7 +248,7 @@ public class MainActivity extends AppCompatActivity {
     public void SleepMode (View view) {
         Intent sleepIntent = new Intent(MainActivity.this, SleepActivity.class);
         sleepIntent.putExtra("save", saveImages);
-        sleepIntent.putExtra("private",privateImages);
+        sleepIntent.putExtra("focusCamera", focusCamera);
         startActivity(sleepIntent);
     }
 
@@ -262,7 +258,7 @@ public class MainActivity extends AppCompatActivity {
         if (requestCode == REQUEST_IMAGE_CAPTURE && resultCode == RESULT_OK) { //AFTER TAKING PICTURE
 
             //HERE OLD IMAGE IS ALREADY DELETED
-            if(!privateImages) { //move file to public directory
+            if(saveImages) { //move file to public directory
                 File publicImage = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES) + "/" + Image.getName());
                 Image.renameTo(publicImage);
                 Image = publicImage;
@@ -278,7 +274,7 @@ public class MainActivity extends AppCompatActivity {
 
             displayImage();
 
-            if(!privateImages) { //update gallery to add image
+            if(saveImages) { //update gallery to add image
                 Intent mediaScanIntent = new Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE);
                 Uri contentUri = Uri.fromFile(Image);
                 mediaScanIntent.setData(contentUri);
@@ -337,13 +333,15 @@ public class MainActivity extends AppCompatActivity {
             Bitmap ScaledBitmap = BitmapFactory.decodeFile(photoDir, settings); //this time the bitmap is returned
             Bitmap bitmap = null;
 
-            if( rotateBitmap ){
+            if( rotateBitmap ){ //rotate picture to better fit the screen size
+
                 Boolean scrennWider = mImageView.getWidth() > mImageView.getHeight();
                 Boolean imageWider = ScaledBitmap.getWidth() > ScaledBitmap.getHeight();
                 if( scrennWider != imageWider) { //then rotate
                     //create rotation matrix
                     Matrix matrix = new Matrix();
-                    matrix.postRotate(-90);
+                    if(scrennWider) matrix.postRotate(-90);
+                    else matrix.postRotate(90);
 
                     //rotate
                     bitmap = Bitmap.createBitmap(ScaledBitmap, 0, 0, ScaledBitmap.getWidth(),ScaledBitmap.getHeight(), matrix, true);
@@ -352,7 +350,8 @@ public class MainActivity extends AppCompatActivity {
                     bitmap = ScaledBitmap;
                 }
             }
-            else {
+            else { //display image as it is
+
                 //get orientation of the picture
                 ExifInterface exif = null;
                 try {
@@ -364,7 +363,7 @@ public class MainActivity extends AppCompatActivity {
                 }
                 int orientation = exif.getAttributeInt(ExifInterface.TAG_ORIENTATION, ExifInterface.ORIENTATION_NORMAL);
 
-                //rotate to real orientation
+                //rotate to real orientation of the picture
                 Matrix matrix = new Matrix();
                 if (orientation == 6) {
                     matrix.postRotate(90);
@@ -392,6 +391,10 @@ public class MainActivity extends AppCompatActivity {
             Image = null;
         }
 
+        //close the sleep service
+        Intent intent = new Intent(this, MediaServiceSleep.class);
+        stopService(intent);
+
         super.onDestroy();
     }
 
@@ -403,7 +406,7 @@ public class MainActivity extends AppCompatActivity {
             changedOptions = false;
             try {
                 readOptions(true); //read file
-                writeOptions(saveImages,privateImages, rotateBitmap, focusCamera);
+                writeOptions(saveImages, rotateBitmap, focusCamera);
             } catch (IOException e) {
                 e.printStackTrace();
             }
@@ -425,32 +428,22 @@ public class MainActivity extends AppCompatActivity {
 
         BufferedReader read = new BufferedReader(file);
 
-        String line = read.readLine();
+        String line = null;
 
-        if(line == null || line.equals("") ) return; //tempfile is empty
+     //   if(line == null || line.equals("") ) return; //tempfile is empty
 
-        if(line.equals("true false")) {
-            saveImages = true;
-            privateImages = false;
-        }
-        else if (line.equals("true true")) {
-            saveImages = true;
-            privateImages = true;
-        }
-        else {
-            saveImages = false;
-            privateImages = true;
-        }
+        for (int i=0; i<3; ++i) {
 
-        for (int i=0; i<2; ++i) {
-
+            Log.i("NeuralNetwork", "line "+i);
             line = read.readLine();
             if(line.equals("true")) {
-                if(i==0) rotateBitmap = true;
+                if (i== 0) saveImages = true;
+                else if(i==1) rotateBitmap = true;
                 else focusCamera = true;
             }
             else if (line.equals("false")) {
-                if(i==0) rotateBitmap = false;
+                if (i== 0) saveImages = false;
+                else if(i==1) rotateBitmap = false;
                 else focusCamera = false;
             }
         }
@@ -460,7 +453,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     //WRITE THE OPTIONS PARAMETERS IN THE FILE
-    private void writeOptions (Boolean save, Boolean pri, Boolean rot, Boolean foc) throws  IOException {
+    private void writeOptions (Boolean save, Boolean rot, Boolean foc) throws  IOException {
 
         if(!askReadWritePermissions(0)) return; //permissions are not given yet, so end the function here
 
@@ -468,7 +461,7 @@ public class MainActivity extends AppCompatActivity {
         saveFile = new File(getExternalFilesDir(null), "options.txt");
         FileOutputStream stream = new FileOutputStream(saveFile);
         //write data and close
-        stream.write((save.toString()+" "+pri.toString() + "\n"+ rot.toString() + "\n"+foc.toString()).getBytes());
+        stream.write((save.toString() + "\n"+ rot.toString() + "\n"+foc.toString()).getBytes());
         stream.close();
 
     }
@@ -477,16 +470,13 @@ public class MainActivity extends AppCompatActivity {
     private void writeOptions (String name , Boolean value) throws  IOException {
         switch (name) {
             case "saveImages":
-                writeOptions(value,privateImages,rotateBitmap,focusCamera);
-                return;
-            case "privateImages":
-                writeOptions(saveImages,value,rotateBitmap,focusCamera);
+                writeOptions(value,rotateBitmap,focusCamera);
                 return;
             case "rotateBitmap":
-                writeOptions(saveImages,privateImages,value,focusCamera);
+                writeOptions(saveImages,value,focusCamera);
                 return;
             case "focusCamera":
-                writeOptions(saveImages,privateImages,rotateBitmap,value);
+                writeOptions(saveImages,rotateBitmap,value);
                 return;
             default:
                 return;
@@ -580,12 +570,11 @@ public class MainActivity extends AppCompatActivity {
                     if( !saveFile.exists()) { //if there is no file
                         try {
                             saveFile.createNewFile();
-                            writeOptions(true,false,true,true);
+                            writeOptions(true,true,true);
                         } catch (IOException e) {
                             return;
                         }
                         saveImages = true;
-                        privateImages = false;
                         rotateBitmap = true;
                         focusCamera = true;
                     } else { //if there is file
@@ -672,7 +661,7 @@ public class MainActivity extends AppCompatActivity {
         public void onPictureTaken(byte[] bytes, Camera camera) {
 
             File storageDir;
-            if (privateImages) storageDir = getExternalFilesDir(Environment.DIRECTORY_PICTURES);
+            if (!saveImages) storageDir = getExternalFilesDir(Environment.DIRECTORY_PICTURES);
             else storageDir = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES);
 
             //create temp-file where the image will be saved
@@ -710,7 +699,7 @@ public class MainActivity extends AppCompatActivity {
             //put picture into image view
             displayImage();
 
-            if (!privateImages) { //update gallery to add image
+            if (saveImages) { //update gallery to add image
                 Intent mediaScanIntent = new Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE);
                 Uri contentUri = Uri.fromFile(Image);
                 mediaScanIntent.setData(contentUri);

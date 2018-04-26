@@ -2,6 +2,7 @@ package oxfordteam5.neuralnetwork;
 
 import android.Manifest;
 import android.app.Service;
+import android.content.ComponentName;
 import android.content.Intent;
 import android.content.pm.ActivityInfo;
 import android.content.pm.PackageManager;
@@ -10,8 +11,12 @@ import android.net.Uri;
 import android.os.Environment;
 import android.os.Handler;
 import android.os.IBinder;
+import android.os.RemoteException;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
+import android.support.v4.media.MediaBrowserCompat;
+import android.support.v4.media.session.MediaControllerCompat;
+import android.support.v4.media.session.MediaSessionCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
@@ -27,7 +32,8 @@ public class SleepActivity extends AppCompatActivity {
     TextView message;
     Camera myCamera;
     Boolean saveImages;
-    Boolean privateImages;
+    Boolean focusCamera;
+    MediaBrowserCompat mediaBrow;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -40,16 +46,54 @@ public class SleepActivity extends AppCompatActivity {
         setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
         Intent start = getIntent();
         saveImages = start.getBooleanExtra("save",true);
-        privateImages = start.getBooleanExtra("private", false);
+        focusCamera = start.getBooleanExtra("focusCamera", true);
 
         askPermissions(112);
 
-        Intent intent = new Intent(this, SleepService.class);
-        intent.putExtra("save",saveImages);
-        intent.putExtra("private",privateImages);
-        startService(intent);
+        mediaBrow = new MediaBrowserCompat(this, new ComponentName(this, MediaServiceSleep.class), myConnCollback, null);
 
     }
+
+    @Override
+    public void onStart() {
+        super.onStart();
+        mediaBrow.connect();
+    }
+
+    @Override
+    public void onStop() {
+        super.onStop();
+        if (MediaControllerCompat.getMediaController(SleepActivity.this) != null) {
+            //MediaControllerCompat.getMediaController(SleepActivity.this).unregisterCallback(controllerCallback);
+        }
+        mediaBrow.disconnect();
+    }
+
+
+    private MediaBrowserCompat.ConnectionCallback myConnCollback = new MediaBrowserCompat.ConnectionCallback() {
+
+        @Override
+        public void onConnected() {
+
+            // Get the token for the MediaSession
+            MediaSessionCompat.Token token = mediaBrow.getSessionToken();
+
+            // Create a MediaControllerCompat
+            MediaControllerCompat mediaController = null;
+            try {
+                mediaController = new MediaControllerCompat(SleepActivity.this,  token);
+            } catch (RemoteException e) {
+                e.printStackTrace();
+            }
+
+            // Save the controller
+            MediaControllerCompat.setMediaController(SleepActivity.this, mediaController);
+
+        }
+
+    };
+
+
 
     private boolean askPermissions(int code) {
         if (ContextCompat.checkSelfPermission(SleepActivity.this,
@@ -105,11 +149,9 @@ public class SleepActivity extends AppCompatActivity {
         }
     }
 
-    @Override
+   /* @Override
     public void onDestroy() { //when the app is getting killed
 
-        Intent intent = new Intent(this, SleepService.class);
-        stopService(intent);
         super.onDestroy();
-    }
+    }*/
 }

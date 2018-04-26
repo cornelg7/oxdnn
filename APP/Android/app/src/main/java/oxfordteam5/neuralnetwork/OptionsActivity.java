@@ -24,9 +24,7 @@ public class OptionsActivity extends AppCompatActivity {
      *
      */
 
-
     boolean saveImg;
-    boolean privateImg;
     boolean rotateImg;
     boolean focus;
 
@@ -40,9 +38,7 @@ public class OptionsActivity extends AppCompatActivity {
         setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
         Intent start = getIntent();
         saveImg = start.getBooleanExtra("saveImages", false);
-        ( (CheckBox) findViewById(R.id.checkBoxSave) ).setChecked(!saveImg);
-        privateImg = start.getBooleanExtra("privateImages", true);
-        ( (CheckBox) findViewById(R.id.checkBoxPrivate) ).setChecked(!privateImg);
+        ( (CheckBox) findViewById(R.id.checkBoxSave) ).setChecked(saveImg);
         rotateImg = start.getBooleanExtra("rotateBitmap", true);
         ( (CheckBox) findViewById(R.id.checkBoxRotateBitmap) ).setChecked(rotateImg);
         focus = start.getBooleanExtra("focusCamera", true);
@@ -63,40 +59,15 @@ public class OptionsActivity extends AppCompatActivity {
     //CHANGE THE VALUE OF SAVEIMG = DOES THE USER WANT THE IMAGES TO BE SAVED?
     public void ChangeSave(View view) {
 
-        //linked to checkbox for "Delete pictures after use"
-        saveImg =  ! ((CheckBox) view).isChecked();
-
-        if(!saveImg) {
-            privateImg = true;
-            ( (CheckBox) findViewById(R.id.checkBoxPrivate) ).setChecked(false); //so we can't save picture to gallery
-        }
+        //linked to checkbox for "Save images in the gallery"
+        saveImg =  ((CheckBox) view).isChecked();
 
         try {
-            writeOutput(saveImg,privateImg, rotateImg, focus);
+            writeOutput(saveImg, rotateImg, focus);
         } catch (IOException e) {
             e.printStackTrace();
         }
 
-    }
-
-    //CHANGE THE VALUE OF PRIVATEIMG = DOES THE USER WANT THE IMAGES TO BE PRIVATE?
-    public void ChangePrivate(View view) {
-
-        //linked to checkbox "save picture to gallery"
-        privateImg =  !((CheckBox) view).isChecked();
-
-        if( !privateImg) {
-            saveImg = true;
-            ( (CheckBox) findViewById(R.id.checkBoxSave) ).setChecked(false); //so we can't delete pictures if they are public
-        }
-
-        try {
-            writeOutput(saveImg,privateImg,rotateImg, focus);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-
-        //message.setText("changePrivate called");
     }
 
     //CHANGE THE VALUE OF ROTATEIMG = DOES THE USER WANT THE IMAGE TO FIT THE SCREEN?
@@ -112,7 +83,6 @@ public class OptionsActivity extends AppCompatActivity {
         }
     }
 
-
     //CHANGE THE VALUE OF FOCUS = DOES THE USER WANT THE CAMERA TO FOCUS BEFORE TAKING PICTURE
     public void  ChangeFocus (View view) {
 
@@ -127,12 +97,12 @@ public class OptionsActivity extends AppCompatActivity {
     }
 
     //WRITE THE OPTIONS PARAMETERS IN THE FILE
-    private void writeOutput (Boolean save, Boolean pri, Boolean rot, Boolean foc) throws  IOException {
+    private void writeOutput (Boolean save, Boolean rot, Boolean foc) throws  IOException {
 
         //get file and output stream
         FileOutputStream stream = new FileOutputStream(output);
         //write data and close
-        stream.write((save.toString()+" "+pri.toString() + "\n"+ rot.toString() + "\n"+foc.toString()).getBytes());
+        stream.write((save.toString()+ "\n"+ rot.toString() + "\n"+foc.toString()).getBytes());
         stream.close();
 
     }
@@ -141,16 +111,13 @@ public class OptionsActivity extends AppCompatActivity {
     private void writeOutput (String name , Boolean value) throws  IOException {
         switch (name) {
             case "saveImages":
-                writeOutput(value,privateImg,rotateImg,focus);
-                return;
-            case "privateImages":
-                writeOutput(saveImg,value,rotateImg,focus);
+                writeOutput(value,rotateImg,focus);
                 return;
             case "rotateBitmap":
-                writeOutput(saveImg,privateImg,value,focus);
+                writeOutput(saveImg,value,focus);
                 return;
             case "focusCamera":
-                writeOutput(saveImg,privateImg,rotateImg,value);
+                writeOutput(saveImg,rotateImg,value);
                 return;
             default:
                 return;

@@ -2,7 +2,6 @@ package oxfordteam5.neuralnetwork;
 
 import android.Manifest;
 import android.content.Intent;
-import android.content.IntentFilter;
 import android.content.pm.ActivityInfo;
 import android.content.pm.PackageManager;
 import android.hardware.Camera;
@@ -18,7 +17,6 @@ import android.widget.TextView;
 public class SleepActivity extends AppCompatActivity {
 
     TextView message;
-    Camera myCamera;
     Boolean saveImages;
     Boolean focusCamera;
 
@@ -28,30 +26,33 @@ public class SleepActivity extends AppCompatActivity {
         setContentView(R.layout.activity_sleep);
         message = findViewById(R.id.textView6);
         message.setText("You can now lock the the screen");
-        myCamera = null;
 
         setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
-        Intent start = getIntent();
-        saveImages = start.getBooleanExtra("save",true);
-        focusCamera = start.getBooleanExtra("focusCamera", true);
+
 
         askPermissions(112);
-
 
     }
 
     @Override
     public void onStart() {
+        Intent start = getIntent();
+        saveImages = start.getBooleanExtra("save",true);
+        focusCamera = start.getBooleanExtra("focusCamera", true);
+
+        //start the service
+        Intent startSleep = new Intent(this, SleepService.class);
+        startSleep.putExtra("save", saveImages);
+        startSleep.putExtra("focus", focusCamera);
+        startService(startSleep);
+
         super.onStart();
-        Intent intent = new Intent(this, SleepService.class);
-        startService(intent);
     }
 
     @Override
     public void onStop() {
         super.onStop();
     }
-
 
     private boolean askPermissions(int code) {
         if (ContextCompat.checkSelfPermission(SleepActivity.this,
@@ -107,9 +108,11 @@ public class SleepActivity extends AppCompatActivity {
         }
     }
 
-   /* @Override
+    @Override
     public void onDestroy() { //when the app is getting killed
-
+        Intent startSleep = new Intent(this, SleepService.class);
+        stopService(startSleep);
         super.onDestroy();
-    }*/
+    }
+
 }

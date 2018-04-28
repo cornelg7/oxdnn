@@ -4,13 +4,16 @@ import android.content.Intent;
 import android.content.pm.ActivityInfo;
 import android.os.AsyncTask;
 import android.provider.MediaStore;
+import android.speech.tts.TextToSpeech;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.View;
 import android.widget.TextView;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.Locale;
 import java.util.concurrent.TimeUnit;
 
 import okhttp3.MediaType;
@@ -24,6 +27,8 @@ import okhttp3.ResponseBody;
 public class ResultActivity extends AppCompatActivity {
 
     static TextView message = null;
+    Utilities util;
+    TextToSpeech voice;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -38,84 +43,28 @@ public class ResultActivity extends AppCompatActivity {
         String name = start.getStringExtra("name");
 
         message.setText(path);
-        new UploadFile().execute(path,name);
+        util = new Utilities(this);;
+        util.upload(message,path,name, null);
+
+         voice = new TextToSpeech(this, new TextToSpeech.OnInitListener() {
+            @Override
+            public void onInit(int i) {
+
+            }
+        });
     }
 
-    static void displayMessage(String text) {
-        message.setText(text);
-    }
 
-
-    static private class UploadFile extends AsyncTask<String, Integer, String> {
-
-        @Override
-        protected String doInBackground(String... files) {
-
-            String path = files[0];
-            String name = files[1];
-
-            if(path == "" || path == null) return "error";
-            if(name == "" || name == null) return "error";
-
-            final MediaType Img = MediaType.parse("image/jpg");
-
-            OkHttpClient.Builder cBuilder = new OkHttpClient.Builder();
-            cBuilder.readTimeout(20000, TimeUnit.MILLISECONDS);
-            cBuilder.writeTimeout(10, TimeUnit.MINUTES);
-            cBuilder.connectTimeout(20000, TimeUnit.MILLISECONDS);
-
-            OkHttpClient client = cBuilder.build();
-
-            RequestBody file_body = RequestBody.create(Img,new File(path));
-            RequestBody body = new MultipartBody.Builder()
-                    .setType(MultipartBody.FORM)
-                    .addFormDataPart("type","image/jpg")
-                    .addFormDataPart("picture", name+".jpg", file_body)
-                    .build();
-
-
-            Request request = new Request.Builder()
-                    .url("http://oxdnn-testing1.azurewebsites.net/upload")
-                    //.url("http://oxdnn.azurewebsites.net/upload")
-                    .post(body)
-                    .build();
-
-            Response response = null;
-            try {
-                response = client.newCall(request).execute();
-            } catch (IOException e) {
-                e.printStackTrace();
-                Log.e("ERROR", "cannot send stuff; response :"+response.toString());
-            }
-
-            ResponseBody responseBody = response.body();
-
-            long length =0;
-            try {
-                length = request.body().contentLength();
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-
-            try {
-                return response.body().string() +"\n"+response.toString()+"\n request method: "+request.method()+" request body length: "+length+" conent type: "+request.body().contentType().toString()+" \n";
-                //return  response.body().string();
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-            return "nono";
-        }
-
-        protected void onProgressUpdate(Integer... progress) {
-           // displayMessage("uploading... " + progress[0]+"% completed");
-        }
-
-        protected void onPostExecute(String result) {
-            displayMessage(result);
-        }
+    public void Speak (View view) {
+        voice.setLanguage(Locale.ENGLISH);
+        voice.speak(message.getText(),TextToSpeech.QUEUE_FLUSH,null,"Trial");
 
     }
 
 
-
+    @Override
+    public void onDestroy () {
+        voice.shutdown();
+        super.onDestroy();
+    }
 }

@@ -11,6 +11,7 @@ import android.graphics.Matrix;
 import android.graphics.SurfaceTexture;
 import android.hardware.Camera;
 import android.media.ExifInterface;
+import android.media.Image;
 import android.net.Uri;
 import android.os.Environment;
 import android.os.Handler;
@@ -50,12 +51,12 @@ public class MainActivity extends AppCompatActivity {
     //VARIABLES
     ImageView mImageView;
     TextView errorMessage;
-    Camera myCamera = null;
     File Image = null; //always store the last image taken since app is launched (is no image the content is null)
     String photoDir = null;
+    Utilities util;
 
     //SETTINGS VARIABLES
-    static  Boolean saveImages; //saveImages tells if the user wants to keep the pictures it takes
+    static Boolean saveImages; //saveImages tells if the user wants to keep the pictures it takes
     static Boolean rotateBitmap; //true to rotate image when displaying them in the mImageView
     static Boolean focusCamera; //true to make the camera focus when taking instant pictures
     static File saveFile = null; //file where we save the settings
@@ -72,7 +73,19 @@ public class MainActivity extends AppCompatActivity {
 
         setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
 
+        util = new Utilities(this);
+
         if(!askReadWritePermissions(READ_WRITE_onCREATE)) return;
+
+        //create temp options file
+        tempOptions = new File(getExternalFilesDir(null), "temp_options.txt");
+        if(!tempOptions.exists()) {
+            try {
+                tempOptions.createNewFile();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
 
         //read options or create the file
         saveFile = new File(getExternalFilesDir(null), "options.txt");
@@ -88,21 +101,13 @@ public class MainActivity extends AppCompatActivity {
             rotateBitmap = true;
         } else { //if there is file
             try {
-                readOptions(false); //read file
+                readOptions(false);
             } catch (IOException e) {
                 e.printStackTrace();
             }
         }
 
-        //create temp options file
-        tempOptions = new File(getExternalFilesDir(null), "temp_options.txt");
-        if(!tempOptions.exists()) {
-            try {
-                tempOptions.createNewFile();
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-        }
+
     }
 
     //GO TO CAMERA TO TAKE PICTURE
@@ -150,56 +155,18 @@ public class MainActivity extends AppCompatActivity {
         if(!askReadWritePermissions(READ_WRITE_INSTANTPICTURE)) return; //permissions are not given yet, so end the function here
         if(!askCameraPermissions(ACCESS_CAMERA)) return;
 
-        //delete old image if needed
-        if(!saveImages && Image != null) {
-            if(Image.exists()) Image.delete();
-            Image = null;
-        }
+        //take picture
+        util.takePictureAndDisplay(Image,focusCamera,saveImages,rotateBitmap,mImageView,errorMessage);
 
-        if(myCamera != null) {
-            myCamera.release();
-            myCamera = null;
-        }
-
-        try {
-            myCamera = Camera.open();
-        } catch (Exception e) {
-            errorMessage.setVisibility(View.VISIBLE);
-            errorMessage.setText("cannot open camera");
-            Log.e(getString(R.string.app_name), "failed to open Camera");
-            e.printStackTrace();
-            return;
-        }
-
-        Camera.Parameters cameraSettings = myCamera.getParameters();
-        cameraSettings.setFocusMode(Camera.Parameters.FOCUS_MODE_AUTO);
-        cameraSettings.setRotation(90);//set the camera to have the right orientation
-        cameraSettings.setFlashMode(Camera.Parameters.FLASH_MODE_AUTO);
-        myCamera.setParameters(cameraSettings);
-
-
-        //create camera preview so we can take picture without problems
-        SurfaceTexture surfaceTexture = new SurfaceTexture(10);
-        try {
-            myCamera.setPreviewTexture(surfaceTexture);
-        } catch (IOException e) {
-            Log.e("NeuralNetwork", "error setting camera preview");
-            e.printStackTrace();
-        }
-        myCamera.startPreview();
-
-
-        if(focusCamera) myCamera.autoFocus(null); //it takes a bit to focus;
-
-        try {
-            myCamera.takePicture(null, null,myCallback );
-        } catch (Exception e) {
-            errorMessage.setVisibility(View.VISIBLE);
-            errorMessage.setText("cannot take picture");
-            Log.e(getString(R.string.app_name), "failed to take picture");
-            e.printStackTrace();
-            return;
-        }
+        new Thread(new Runnable() { //create new thread which waits untill util is done and then updates image and photo
+            @Override
+            public void run() {
+                while (Utilities.working) {} //wait for the pucture to be taken
+                //update files
+                Image = util.Image;
+                photoDir = util.photoDir;
+            }
+        }).start();
 
     }
 
@@ -225,18 +192,22 @@ public class MainActivity extends AppCompatActivity {
             return;
         }
 
+        Log.e("Main","path: "+photoDir+"; name:"+ Image.getName());
         Intent ResultIntent = new Intent(MainActivity.this, ResultActivity.class);
         ResultIntent.putExtra("path", photoDir);
         ResultIntent.putExtra("name", Image.getName());
         startActivity(ResultIntent);
-
-
 
     }
 
     //GO TO THE OPTIONS SCREEN
     public void Options(View view) {
         changedOptions = true;
+        try {
+            readOptions(false);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
         Intent OptionsIntent = new Intent(MainActivity.this, OptionsActivity.class);
         OptionsIntent.putExtra("saveImages", saveImages);
         OptionsIntent.putExtra("rotateBitmap", rotateBitmap);
@@ -272,7 +243,7 @@ public class MainActivity extends AppCompatActivity {
                 return;
             }
 
-            displayImage();
+            util.displayImage(mImageView,errorMessage,rotateBitmap,photoDir);
 
             if(saveImages) { //update gallery to add image
                 Intent mediaScanIntent = new Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE);
@@ -307,79 +278,9 @@ public class MainActivity extends AppCompatActivity {
 
             //now get a file and set the image view
             Image = new File (photoURI.toString());
-            displayImage();
+            util.displayImage(mImageView,errorMessage,rotateBitmap,photoDir);
         }
 
-    }
-
-    //SCALE IMAGE AND DISPLAY IT (sometimes image is rotate to fit better; may add option to fix it)
-    protected void displayImage() {
-        if (Image == null){
-            mImageView.setVisibility(View.INVISIBLE);
-            errorMessage.setVisibility(View.VISIBLE);
-            errorMessage.setText("null image");
-            return;
-        }
-        else {
-
-            BitmapFactory.Options settings = new BitmapFactory.Options() ;
-            settings.inJustDecodeBounds = true; //so we don't use up much memory
-            BitmapFactory.decodeFile(photoDir, settings); //data invariant : photoDir is path of Image
-            if( settings.outWidth > 1048 || settings.outHeight > 1048) { //scale the picture if one dimension exceeds 1048px
-                int scale = (int) Math.max(settings.outHeight/1048, settings.outWidth/1048); //the largest dimension is scale*1048
-                settings.inSampleSize = scale; //so the image is 1/scale its original size
-            }
-            settings.inJustDecodeBounds = false;
-            Bitmap ScaledBitmap = BitmapFactory.decodeFile(photoDir, settings); //this time the bitmap is returned
-            Bitmap bitmap = null;
-
-            if( rotateBitmap ){ //rotate picture to better fit the screen size
-
-                Boolean scrennWider = mImageView.getWidth() > mImageView.getHeight();
-                Boolean imageWider = ScaledBitmap.getWidth() > ScaledBitmap.getHeight();
-                if( scrennWider != imageWider) { //then rotate
-                    //create rotation matrix
-                    Matrix matrix = new Matrix();
-                    if(scrennWider) matrix.postRotate(-90);
-                    else matrix.postRotate(90);
-
-                    //rotate
-                    bitmap = Bitmap.createBitmap(ScaledBitmap, 0, 0, ScaledBitmap.getWidth(),ScaledBitmap.getHeight(), matrix, true);
-                }
-                else { //no rotation needed
-                    bitmap = ScaledBitmap;
-                }
-            }
-            else { //display image as it is
-
-                //get orientation of the picture
-                ExifInterface exif = null;
-                try {
-                    exif = new ExifInterface(photoDir);
-                } catch (IOException e) {
-                    Log.e("NeuralNetwork", "error with ExifInterface");
-                    e.printStackTrace();
-                    return;
-                }
-                int orientation = exif.getAttributeInt(ExifInterface.TAG_ORIENTATION, ExifInterface.ORIENTATION_NORMAL);
-
-                //rotate to real orientation of the picture
-                Matrix matrix = new Matrix();
-                if (orientation == 6) {
-                    matrix.postRotate(90);
-                }
-                else if (orientation == 3) {
-                    matrix.postRotate(180);
-                }
-                else if (orientation == 8) {
-                    matrix.postRotate(270);
-                }
-                bitmap = Bitmap.createBitmap(ScaledBitmap, 0, 0, ScaledBitmap.getWidth(),ScaledBitmap.getHeight(), matrix, true);
-            }
-            errorMessage.setVisibility(View.INVISIBLE);
-            mImageView.setVisibility(View.VISIBLE);
-            mImageView.setImageBitmap(bitmap);
-        }
     }
 
     //EXECUTE WHEN DESTROYING APP
@@ -392,8 +293,6 @@ public class MainActivity extends AppCompatActivity {
         }
 
         //close the sleep service
-        Intent intent = new Intent(this, SleepService.class);
-        stopService(intent);
 
         super.onDestroy();
     }
@@ -411,43 +310,18 @@ public class MainActivity extends AppCompatActivity {
                 e.printStackTrace();
             }
 
+
         }
 
         super.onResume();
     }
 
-    //READ OPTIONS FROM FILE
-    private void readOptions(Boolean temp) throws  IOException{
-
-        if(!askReadWritePermissions(0)) return; //permissions are not given yet, so end the function here
-
-        FileReader file = null;
-
-        if (temp) file = new FileReader(tempOptions);
-        else file = new FileReader(saveFile);
-
-        BufferedReader read = new BufferedReader(file);
-
-        String line = null;
-
-     //   if(line == null || line.equals("") ) return; //tempfile is empty
-
-        for (int i=0; i<3; ++i) {
-            line = read.readLine();
-            if(line.equals("true")) {
-                if (i== 0) saveImages = true;
-                else if(i==1) rotateBitmap = true;
-                else focusCamera = true;
-            }
-            else if (line.equals("false")) {
-                if (i== 0) saveImages = false;
-                else if(i==1) rotateBitmap = false;
-                else focusCamera = false;
-            }
-        }
-
-        file.close();
-        read.close();
+    //READ OPTIONS AND UPDATE VARIABLES
+    private void readOptions(Boolean temp) throws  IOException {
+        util.readOptions(false,saveFile,tempOptions); //read file
+        saveImages = util.saveImages;
+        focusCamera = util.focusCamera;
+        rotateBitmap = util.rotateBitmap;
     }
 
     //WRITE THE OPTIONS PARAMETERS IN THE FILE
@@ -455,12 +329,7 @@ public class MainActivity extends AppCompatActivity {
 
         if(!askReadWritePermissions(0)) return; //permissions are not given yet, so end the function here
 
-        //get file and output stream
-        saveFile = new File(getExternalFilesDir(null), "options.txt");
-        FileOutputStream stream = new FileOutputStream(saveFile);
-        //write data and close
-        stream.write((save.toString() + "\n"+ rot.toString() + "\n"+foc.toString()).getBytes());
-        stream.close();
+        util.writeOptions(save,rot,foc,saveFile);
 
     }
 
@@ -652,59 +521,5 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-
-    //CALLBACK WHICH WILL SAVE THE PICTURE TAKEN BY THE CAMERA
-    private Camera.PictureCallback myCallback = new Camera.PictureCallback() {
-        @Override
-        public void onPictureTaken(byte[] bytes, Camera camera) {
-
-            File storageDir;
-            if (!saveImages) storageDir = getExternalFilesDir(Environment.DIRECTORY_PICTURES);
-            else storageDir = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES);
-
-            //create temp-file where the image will be saved
-            File image = null;
-            try {
-                image= File.createTempFile("IMG", ".jpg", storageDir);
-            } catch (IOException e) {
-                errorMessage.setVisibility(View.VISIBLE);
-                errorMessage.setText("cannot create file to save picture in");
-                Log.e(getString(R.string.app_name), Log.getStackTraceString(e));
-                return;
-            }
-
-            Image = image; //the Image file should already be deleted before taking the picture
-
-            //write data collected by camera into the image file
-            try {
-                FileOutputStream output = new FileOutputStream(Image);
-                output.write(bytes);
-                output.close();
-            } catch (IOException e) {
-                e.printStackTrace();
-                Log.e(getString(R.string.app_name), "failed to write data to the picture file");
-                errorMessage.setVisibility(View.VISIBLE);
-                errorMessage.setText("cannot write image to file");
-                return;
-            }
-
-            //release camera
-            myCamera.release();
-            myCamera = null;
-
-            photoDir = Image.getAbsolutePath(); //update directory of photo
-
-            //put picture into image view
-            displayImage();
-
-            if (saveImages) { //update gallery to add image
-                Intent mediaScanIntent = new Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE);
-                Uri contentUri = Uri.fromFile(Image);
-                mediaScanIntent.setData(contentUri);
-                MainActivity.this.sendBroadcast(mediaScanIntent);
-            }
-
-        }
-    };
 }
 

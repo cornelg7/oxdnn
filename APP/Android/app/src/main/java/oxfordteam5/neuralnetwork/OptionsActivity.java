@@ -16,9 +16,6 @@ import java.io.IOException;
 public class OptionsActivity extends AppCompatActivity {
 
     /*
-     * THE CONTENT OF THE WRITEOUTPUT FUNCTION SHOULD BE THE SAME AS THE WRITEOPTIONS FUNCTION IN THE MAIN ACTIVITY
-     *
-     * THE ONLY DIFFERENCE IS THE THIS ACTIVITY WRITES IN THE TEMP FILE AND NOT THE PERMANENT ONE
      *
      * THE SECOND WRITEOUTPUT FUNCTION SHOULD BEHAVE THE SAME AS IN MAIN ACTIVITY
      *
@@ -30,6 +27,7 @@ public class OptionsActivity extends AppCompatActivity {
 
     File output;
 
+    Utilities util;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -52,8 +50,9 @@ public class OptionsActivity extends AppCompatActivity {
                 Log.e("NueralNetwork", "cannot create temp file which is missing");
                 e.printStackTrace();
             }
-
         }
+
+        util = new Utilities(this);
     }
 
     //CHANGE THE VALUE OF SAVEIMG = DOES THE USER WANT THE IMAGES TO BE SAVED?
@@ -99,11 +98,7 @@ public class OptionsActivity extends AppCompatActivity {
     //WRITE THE OPTIONS PARAMETERS IN THE FILE
     private void writeOutput (Boolean save, Boolean rot, Boolean foc) throws  IOException {
 
-        //get file and output stream
-        FileOutputStream stream = new FileOutputStream(output);
-        //write data and close
-        stream.write((save.toString()+ "\n"+ rot.toString() + "\n"+foc.toString()).getBytes());
-        stream.close();
+        util.writeOptions(save,rot,foc,output);
 
     }
 

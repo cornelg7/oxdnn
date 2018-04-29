@@ -2,3 +2,5 @@
 *.h5
 node_modules/
 .pids
+node.log
+py.log

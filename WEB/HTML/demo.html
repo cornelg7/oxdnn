@@ -24,34 +24,87 @@
 		<script> $(function(){ $("#demo_title_bar").load("demo_title_bar.html"); }); </script> 
 
 
-		<div class="row">
-			<div class="col-sm-8">
-				<div class="dragDrop" id ="dropZone"> </div>
+		<div class="jumbotron">
+
+			<div class="row" style="padding-top:30px;"> 
+				<div class="col-sm-12 text-center">
+					<h1> Pictures ready for upload: </h1>
+				</div>
+			</div>
+			
+			<!-- the drop zone -->
+			<div class="row">
+				<div class="col-sm-12">
+					<div class="dragDrop" id ="dropZone"> </div>
+				</div>
 			</div>
 
-			<div class="col-sm-4" style="padding-top:30px;">
-				<!--Here is the form to upload a file. We need to link action to a .php or .asp file which will run on the server and write the data collected here into a file-->
-				<form action='' method="post" enctype="multipart/form-data">
-					Select picture to upload 
-					<input type="file" name="photos[]" id="fileUploading" multiple accept="image/*"> 
-				<!--	<input type="submit" name="submit" value="Upload"> -->
-					Size limit: 10 MB
-				</form>	
+			<div class="row">
+				<!-- column for uploading from pc -->
+				<div class="col-sm-6 text-center">
+					
+					<div class="row">
+						<div class="col-sm-12 text-center">
+							<h2> Upload from PC </h2>
+						</div>
+					</div>
+
+					<div class="row">
+						<div class="col-sm-12 text-center">
+							<!--Here is the form to upload a file. We need to link action to a .php or .asp file which will run on the server and write the data collected here into a file-->
+							<form action='' method="post" enctype="multipart/form-data">
+								Select picture to upload 
+								<input type="file" name="photos[]" id="fileUploading" multiple accept="image/*"> 
+							<!--	<input type="submit" name="submit" value="Upload"> -->
+								Size limit: 10 MB
+							</form>
+						</div>
+					</div>
+
+				</div>
+
+				<!-- column for the map -->
+				<div class="col-sm-6 text-center">
+
+					<div class="row">
+						<div class="col-sm-12 text-center">
+							<h2> Or choose a location on maps </h2>
+						</div>
+					</div>
+
+					<div class="row">
+						<div class="col-sm-12 text-center">
+							Container for google maps api.
+						</div>
+					</div>
+						
+				</div>
 			</div>
-		</div>
-		
- 	 	 
- 	 	<button id="RunButton" onclick="show('outputDiv')">Try the demo </button>
-		
+			
+			<!-- row for the button which uploads the files in drop zone -->
+			<div class="row">
+				<div class="col-sm-12 text-center">
+					<button type="button" class="btn btn-primary btn-lg" id="RunButton" onclick="show('outputDiv')"> Upload </button>
+				</div>
+			</div>
 
-		<div id="progressDiv"> </div>
-		
 
-		<div id="outputDiv" style = "display:none">
-			<h3> Output : </h3>
-			<p> bla bla bla
-			</p>
+			<!-- rows for displaying the output -->
+			<div class="row">
+				<div id="progressDiv"> </div>
+			</div>
+
+			<div class="row">
+				<div clss="col-sm-12 text-center">
+					<div id="outputDiv" style = "display:none">
+						<h3> Output : </h3>
+						<p> bla bla bla </p>
+					</div>
+				</div>
+			</div>
+
 		</div>
+
 		
 		
 		<!-- JS to check what file is being uploaded-->

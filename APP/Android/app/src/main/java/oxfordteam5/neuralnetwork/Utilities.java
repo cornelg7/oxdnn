@@ -8,6 +8,8 @@ import android.graphics.Matrix;
 import android.graphics.SurfaceTexture;
 import android.hardware.Camera;
 import android.media.ExifInterface;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Environment;
@@ -71,6 +73,7 @@ public class Utilities {
             message = messageView;
             voice = tts;
         }
+
         @Override
         protected String doInBackground(String... files) {
 
@@ -80,7 +83,21 @@ public class Utilities {
             if(path == "" || path == null) return "error";
             if(name == "" || name == null) return "error";
 
-            final MediaType Img = MediaType.parse("image/jpg");
+
+            String type = new Utilities(null).getFileExtension(name);
+            if (!(type.equals("jpg") || type.equals("png") || type.equals("bmp") || type.equals("gif") || type.equals("jpeg") || type.equals("tiff") )) {
+                //name seems not to have an extension
+                type = new Utilities(null).getFileExtension(path);
+                if (!(type.equals("jpg") || type.equals("png") || type.equals("bmp") || type.equals("gif") || type.equals("jpeg") || type.equals("tiff"))) {
+                    Log.e("uploadNeuralNetwork", "cannot find file, abort upload");
+                    voice.speak("I don't understand which type of file I'm analysing", TextToSpeech.QUEUE_FLUSH,null,"FileTypeError" );
+                    return "";
+                }
+                //the path has an extension, then add it to the name
+                name = name + "."+type;
+            }
+
+            final MediaType Img = MediaType.parse("image/"+type);
 
             OkHttpClient.Builder cBuilder = new OkHttpClient.Builder();
             cBuilder.readTimeout(20000, TimeUnit.MILLISECONDS);
@@ -92,8 +109,8 @@ public class Utilities {
             RequestBody file_body = RequestBody.create(Img,new File(path));
             RequestBody body = new MultipartBody.Builder()
                     .setType(MultipartBody.FORM)
-                    .addFormDataPart("type","image/jpg")
-                    .addFormDataPart("picture", name+".jpg", file_body)
+                    .addFormDataPart("type","image/"+type)
+                    .addFormDataPart("picture", name, file_body)
                     .build();
 
 
@@ -106,12 +123,11 @@ public class Utilities {
             Response response = null;
             try {
                 response = client.newCall(request).execute();
-            } catch (IOException e) {
+            } catch (Exception e) {
+                Log.e("ERROR", "cannot send stuff");
                 e.printStackTrace();
-                Log.e("ERROR", "cannot send stuff; response :"+response.toString());
+                return "I can't analyse the image. Probably there is no internet connection";
             }
-
-            ResponseBody responseBody = response.body();
 
             long length =0;
             try {
@@ -121,18 +137,20 @@ public class Utilities {
             }
 
             try {
-                return response.body().string() +"\n"+response.toString()+"\n request method: "+request.method()+" request body length: "+length+" conent type: "+request.body().contentType().toString()+" \n";
-                //return  response.body().string();
+                //return response.body().string() +"\n"+response.toString()+"\n request method: "+request.method()+" request body length: "+length+" conent type: "+request.body().contentType().toString()+" \n";
+                return  response.body().string();
             } catch (Exception e) {
                 e.printStackTrace();
             }
-            return "nono";
+            return "An error occurred. Try again in a few moments";
         }
 
+        @Override
         protected void onProgressUpdate(Integer... progress) {
             // displayMessage("uploading... " + progress[0]+"% completed");
         }
 
+        @Override
         protected void onPostExecute(String result) {
             if(message != null) message.setText(result);
             Utilities.working = false;
@@ -153,10 +171,27 @@ public class Utilities {
 
     }
 
-    public void upload(TextView display, String path, String name, TextToSpeech voice) {
+    public void upload(TextView display, String path, String name, TextToSpeech voice)  {
         working = true;
         Log.e(TAG,"path: "+path+"; name:"+name);
+        
+
         new UploadFile(display,voice).execute(path,name); //upload files and show the response in the textview display
+    }
+
+    public String getFileExtension (String name) {
+        String result = "";
+
+        for (int i =name.length()-1 ; i>= 0; i--) {
+            char c = name.charAt(i);
+            if (c == '.') {
+                result = name.substring(i+1);
+            }
+        }
+
+        Log.e(TAG, "File type:" +result);
+
+        return  result;
     }
 
 

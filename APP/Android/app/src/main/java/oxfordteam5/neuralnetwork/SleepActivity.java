@@ -11,6 +11,7 @@ import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 
+import android.view.View;
 import android.widget.TextView;
 
 
@@ -39,6 +40,7 @@ public class SleepActivity extends AppCompatActivity {
         Intent start = getIntent();
         saveImages = start.getBooleanExtra("save",true);
         focusCamera = start.getBooleanExtra("focusCamera", true);
+
 
         //start the service
         Intent startSleep = new Intent(this, SleepService.class);
@@ -89,6 +91,13 @@ public class SleepActivity extends AppCompatActivity {
 
         }
         return  true;
+    }
+
+    public void stopSleepMode(View view) {
+        Intent sleepMode = new Intent(this, SleepService.class);
+        stopService(sleepMode);
+        Intent goBack = new Intent(this, MainActivity.class);
+        startActivity(goBack);
     }
 
     @Override

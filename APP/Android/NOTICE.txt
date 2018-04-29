@@ -1,0 +1,7 @@
+This Android Project make use of 2 external libraries:
+OkHttp  https://github.com/square/okhttp
+Okio   https://github.com/square/okio
+
+Both libraries are issued under the Apache License 2.0.
+You can find a copy of such license in this directory or online at
+http://www.apache.org/licenses/LICENSE-2.0

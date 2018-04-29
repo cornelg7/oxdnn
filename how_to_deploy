@@ -1,3 +1,5 @@
-To deploy run these two commands:
-python3 ML/network_server.py &
-sudo nodejs app.js
+To start or restart, run:
+./start
+
+To stop, run:
+./stop

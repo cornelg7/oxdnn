@@ -1,0 +1,3 @@
+To deploy run these two commands:
+python3 ML/network_server.py &
+sudo nodejs app.js

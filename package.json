@@ -9,12 +9,11 @@
     "express": "^4.16.3",
     "fs": "0.0.1-security",
     "zeromq": "^4.6.0",
-    "zerorpc": "^0.9.7"
+    "zerorpc": "^0.9.7",
+    "zmq": "^2.15.3"
   },
   "devDependencies": {},
-  "scripts": {
-    "start": "(python3 ML/network_server.py) & nodejs app.js"
-  },
+  "scripts": {},
   "repository": {
     "type": "git",
     "url": "git+https://github.com/cornelg7/oxdnn.git"

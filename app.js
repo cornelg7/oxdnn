@@ -2,7 +2,7 @@
 const express = require('express');
 const app = express();
 
-app.set('port', process.env.PORT || 3000);
+app.set('port', process.env.PORT || 80);
 app.use(express.static('WEB/HTML'));
 app.use(express.static('WEB'));
 app.use(require('./API/api'));

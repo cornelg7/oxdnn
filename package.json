@@ -7,12 +7,14 @@
     "busboy": "^0.2.14",
     "connect-busboy": "0.0.2",
     "express": "^4.16.3",
-    "fs": "0.0.1-security"
+    "fs": "0.0.1-security",
+    "uuid": "^3.2.1",
+    "zeromq": "^4.6.0",
+    "zerorpc": "^0.9.7",
+    "zmq": "^2.15.3"
   },
   "devDependencies": {},
-  "scripts": {
-    "start": "nodejs app.js"
-  },
+  "scripts": {},
   "repository": {
     "type": "git",
     "url": "git+https://github.com/cornelg7/oxdnn.git"

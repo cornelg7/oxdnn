@@ -1,2 +1,4 @@
 # Ignore trained keras model files (too large)
 *.h5
+node_modules/
+.pids

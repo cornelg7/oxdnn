@@ -2,8 +2,9 @@
 const busboy = require('connect-busboy');
 const express = require('express');
 const fs = require('fs');
+const request = require('request');
 const uuidV4 = require('uuid/v4');
-const zerorpc = require("zerorpc");
+const zerorpc = require('zerorpc');
 
 // const googleMapsClient = require('@google/maps').createClient({
 //   key: 'AIzaSyCjNr4oNHdPz49y_I4yVTm18R8NlMVJxOM'
@@ -35,7 +36,7 @@ const mime = {
 const py_temp = __dirname + '/../ML/temp/';
 
 const client = new zerorpc.Client();
-client.connect("tcp://127.0.0.1:44224");
+client.connect('tcp://127.0.0.1:44224');
 
 router.post('/upload', function(req, res) {
     try {
@@ -69,7 +70,7 @@ router.post('/upload', function(req, res) {
                         return res.status(500).send('Something went wrong!');
                     }
 
-                    sendImage(py_temp + u_filename, res, true);
+                    sendImage(py_temp + u_filename, ext, res, true);
                 });
             });
         });
@@ -80,9 +81,39 @@ router.post('/upload', function(req, res) {
     }
 });
 
+router.post('/upload-url', function(req, res) {
+    try {
+        let u_filename = uuidV4() + '.jpg';
+        let fstream = fs.createWriteStream(py_temp + u_filename);
+        console.log(req.body);
+        request(dummy_url).pipe(fstream);
 
+        fstream.on('close', function () {
+            if (file.truncated) {
+                console.log('Rejected: ' + filename + ' (too large)');
+                deleteFile(py_temp + u_filename);
+                return res.status(413).send('The file is too large!');
+            }
 
+            console.log('Accepted: ' + filename);
+                
+            client.invoke("evaluate", u_filename, function(error, nn_res) {                    
+                if (error) {
+                    console.log('Neural network error: ' + error);
+                    return res.status(500).send('Something went wrong!');
+                }
 
+                sendImage(py_temp + u_filename, ext, res, true);
+            });
+        });
+    } catch (e) {
+        console.log(e);
+        console.log(req);
+        return res.status(500).send('Something went wrong!');
+    }
+});
+
+var dummy_url = 'https://maps.googleapis.com/maps/api/streetview?size=600x300&location=46.414382,10.013988&heading=151.78&pitch=-0.76';
 
 
 function deleteFile(path) {
@@ -91,7 +122,7 @@ function deleteFile(path) {
     });
 }
 
-function sendImage(filepath, res, erase) {
+function sendImage(filepath, ext, res, erase) {
     let type = mime[ext] || 'text/plain';
     let s = fs.createReadStream(filepath);
     s.on('open', function () {

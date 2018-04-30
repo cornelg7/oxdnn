@@ -73,8 +73,15 @@
 					</div>
 
 					<div class="row">
-						<div class="col-sm-12 text-center">
+						<div class="col-sm-12 text-center" id="GoogleMaps" style="height: 20rem">
 							Container for google maps api.
+						</div>
+					</div>
+					
+					<div class ="row">
+						<div class="col-sm-12">
+							<input type="text" value="Computer Science Department, University of Oxford" id="address" style="width: 80%">
+							<button onClick="showOnMap()"> find location </button>
 						</div>
 					</div>
 						
@@ -104,14 +111,16 @@
 			</div>
 
 		</div>
-
+		
 		
 		
 		<!-- JS to check what file is being uploaded-->
 		<!-- The script needs to be here so it can access the form element defined above-->
 		<script src="../JS/Upload.js"> </script>
-
-
+		<!--Script to handle Maps and script to include the Google Maps API; the KEY should not be public, so is not written here-->
+		<script async defer src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCI14311VO3pwTKp1cZz64usLBX7OU9Vfo&callback=initMap"> </script>
+		<script src="../JS/Maps.js"> </script>
+		
 		<!-- footer -->
 		<footer id="Footer" class="footer text-white bg-dark"> </footer>
 		<script> $(function(){ $("#Footer").load("footer.html"); }); </script> 		

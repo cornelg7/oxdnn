@@ -5,6 +5,10 @@ const fs = require('fs');
 const uuidV4 = require('uuid/v4');
 const zerorpc = require("zerorpc");
 
+// const googleMapsClient = require('@google/maps').createClient({
+//   key: 'AIzaSyCjNr4oNHdPz49y_I4yVTm18R8NlMVJxOM'
+// });
+
 const router = express.Router();
 
 const SIZE_LIMIT = 10 * 1024 * 1024;
@@ -34,52 +38,72 @@ const client = new zerorpc.Client();
 client.connect("tcp://127.0.0.1:44224");
 
 router.post('/upload', function(req, res) {
-    req.pipe(req.busboy);
-    req.busboy.on('file', function (fieldname, file, filename) {
-        let uuid = uuidV4();
-        let ext = filename.split('.').pop();
-        let u_filename = uuid + '.' + ext;
+    try {
+        req.pipe(req.busboy);
+        req.busboy.on('file', function (fieldname, file, filename) {
+            let uuid = uuidV4();
+            let ext = filename.split('.').pop();
 
-        if (ext !== 'png' && ext !== 'jpg') {
-            return res.status(415).send('Illegal file type!');
-        }
-
-        let fstream = fs.createWriteStream(py_temp + u_filename);
-        file.pipe(fstream);
-        fstream.on('close', function () {
-            if (file.truncated) {
-                console.log('Rejected: ' + filename + ' (too large)');
-                deleteFile(py_temp + u_filename);
-                return res.status(413).send('The file is too large!');
+            if (ext === 'jpeg') ext = 'jpg';
+            if (ext !== 'png' && ext !== 'jpg') {
+                return res.status(415).send('Illegal file type!');
             }
 
-            console.log('Accepted: ' + filename);
-                
-            client.invoke("evaluate", u_filename, function(error, nn_res) {                    
-                if (error) {
-                    console.log('Neural network error: ' + error);
-                    return res.status(500).send('Something went wrong!');
+            let u_filename = uuid + '.' + ext;
+
+            let fstream = fs.createWriteStream(py_temp + u_filename);
+            file.pipe(fstream);
+
+            fstream.on('close', function () {
+                if (file.truncated) {
+                    console.log('Rejected: ' + filename + ' (too large)');
+                    deleteFile(py_temp + u_filename);
+                    return res.status(413).send('The file is too large!');
                 }
 
-                let type = mime[ext] || 'text/plain';
-                let s = fs.createReadStream(py_temp + u_filename);
-                s.on('open', function () {
-                    console.log('Sanity check - content type: ' + type);
-                    res.set('Content-Type', type);
-                    s.pipe(res);
-                });
-                s.on('end', function() {
-                    deleteFile(py_temp + u_filename);
+                console.log('Accepted: ' + filename);
+                    
+                client.invoke("evaluate", u_filename, function(error, nn_res) {                    
+                    if (error) {
+                        console.log('Neural network error: ' + error);
+                        return res.status(500).send('Something went wrong!');
+                    }
+
+                    sendImage(py_temp + u_filename, res, true);
                 });
             });
         });
-    });
+    } catch (e) {
+        console.log(e);
+        console.log(req);
+        return res.status(500).send('Something went wrong!');
+    }
 });
+
+
+
+
+
 
 function deleteFile(path) {
     fs.unlink(path, (err) => {
         if (err) return console.log(err);
     });
+}
+
+function sendImage(filepath, res, erase) {
+    let type = mime[ext] || 'text/plain';
+    let s = fs.createReadStream(filepath);
+    s.on('open', function () {
+        console.log('Sanity check - content type: ' + type);
+        res.set('Content-Type', type);
+        s.pipe(res);
+    });
+    if (erase) {
+        s.on('end', function() {
+            deleteFile(filepath);
+        });
+    }
 }
 
 module.exports = router

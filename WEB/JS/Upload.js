@@ -103,10 +103,7 @@ function FileUpload(image, file, total) {
 }
 
 
-
 // function which individually sends each picture
-
-
 const sendFiles = function () {
 	 
 	var images = document.querySelectorAll(".toBeUploaded") //get all pictures

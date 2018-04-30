@@ -82,6 +82,7 @@
 						<div class="col-sm-12">
 							<input type="text" value="Computer Science Department, University of Oxford" id="address" style="width: 80%">
 							<button onClick="showOnMap()"> find location </button>
+							<button onClick="getPhotos()">get images</button>
 						</div>
 					</div>
 						
@@ -118,7 +119,7 @@
 		<!-- The script needs to be here so it can access the form element defined above-->
 		<script src="../JS/Upload.js"> </script>
 		<!--Script to handle Maps and script to include the Google Maps API; the KEY should not be public, so is not written here-->
-		<script async defer src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCI14311VO3pwTKp1cZz64usLBX7OU9Vfo&callback=initMap"> </script>
+		<script async defer src="https://maps.googleapis.com/maps/api/js?key=API-KEYallback=initMap&libraries=places"> </script>
 		<script src="../JS/Maps.js"> </script>
 		
 		<!-- footer -->

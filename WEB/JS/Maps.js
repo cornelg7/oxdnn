@@ -51,18 +51,17 @@ var handlePlace = function (place, status) {
 	if (status == google.maps.places.PlacesServiceStatus.OK) {
 		
 		var previewDiv = document.getElementById("dropZone")
-		var photosArray = [];
+
 		for (var i =0; i < place.photos.length; i++) {
 			var photo = place.photos[i].getUrl({'maxWidth': 1080, 'maxHeight': 1080}); //get photo url
 			//create photo thumbnail
 			var image = document.createElement("img")
 			image.src= photo
+			image..classList.add('urlToUpload')
 			previewDiv.appendChild(image)
 			console.log(photo)
-			//photosArray = photosArray.push()
 			
 		}
-		
 		
 	} else {
 		alert('Google cannot find the place requested: '+ status);

@@ -57,7 +57,7 @@ var handlePlace = function (place, status) {
 			//create photo thumbnail
 			var image = document.createElement("img")
 			image.src= photo
-			image..classList.add('urlToUpload')
+			image.classList.add('urlToUpload')
 			previewDiv.appendChild(image)
 			console.log(photo)
 			

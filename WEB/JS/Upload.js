@@ -29,7 +29,7 @@ const handlePicture = function(files) {
 var count = 0; //global variable which counts the uploaded files
 
 
-function createXHR(image,total) {
+function createXHR(image,name,total) {
 	
 	var xhr = new XMLHttpRequest(); //object to send the data
 
@@ -46,7 +46,7 @@ function createXHR(image,total) {
 	spanFile.appendChild(this.bar);
 	this.p = document.createElement("p"); //create <p> element
 	this.p.style = 'display: inline; margin-left: 1rem;'
-	this.p.innerHTML = " uploading "+file.name;
+	this.p.innerHTML = " uploading "+name;
 	spanFile.appendChild(this.p);
 	progressDiv.appendChild(spanFile);
 	this.spanFile = spanFile;
@@ -104,7 +104,7 @@ function createXHR(image,total) {
 //function to upload a single file
 function FileUpload(image, file, total) {
 
-	var xhr = createXHR(image,total)
+	var xhr = createXHR(image,file.name,total)
 	var formData = new FormData();
 	
 	formData.append('picture', file);//add prefix to file
@@ -117,9 +117,9 @@ function FileUpload(image, file, total) {
 
 function UrlUpload(image, url, total) {
 
-	var xhr = createXHR(image, total)
+	var xhr = createXHR(image,'Google image' ,total)
     
-    xhr.open("POST", "/upload", true);
+    xhr.open("POST", "/upload-url", true);
     xhr.send(url);
 }
 
@@ -140,7 +140,7 @@ const sendFiles = function () {
 	
 	var urlsNumber = urls.length
 	
-	for(var i =0; i< urlsNumbber; i++) {
+	for(var i =0; i< urlsNumber; i++) {
 		new UrlUpload(urls[i],urls[i].src,urlsNumber)
 	}
 }

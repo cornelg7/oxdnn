@@ -88,10 +88,13 @@ function createXHR(image,name,total) {
 			
 			var reader = new FileReader();
 			var output = document.createElement("img") //need to scale the image to some max-width and max-height
-			output.style = 'max.width: 100%'
+			output.style = 'max-width: 100%'
 			reader.onload =( function(Img) { return function (event) {Img.src = event.target.result;}; }  ) (output)
 			reader.readAsDataURL(xhr.response)
-        	
+        	var text = self.p.innerHTML
+            text = text.replace("... analysing picture"," done - find result below")
+	        text = text.replace("uploaded", "")
+            self.p.innerHTML = text
 			document.getElementById('outputDiv').appendChild(output)
 			
 			image.classList = ["Uploaded"] //so we know this file was uploaded
@@ -105,7 +108,7 @@ function createXHR(image,name,total) {
 //function to upload a single file
 function FileUpload(image, file, total) {
 
-	var xhr = createXHR(image,file.name,total)
+	var xhr = new createXHR(image,file.name,total)
 	var formData = new FormData();
 	
 	formData.append('picture', file);//add prefix to file
@@ -118,7 +121,7 @@ function FileUpload(image, file, total) {
 
 function UrlUpload(image, url, total) {
 
-	var xhr = createXHR(image,'Google image' ,total)
+	var xhr = new createXHR(image,'Google image' ,total)
     
     xhr.open("POST", "/upload-url", true);
     xhr.send(url);

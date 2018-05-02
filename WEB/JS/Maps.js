@@ -4,6 +4,7 @@
 
 var map;
 var geocoder;
+var placeService;
 var marker = null;
 var placeID= null;
 
@@ -16,7 +17,7 @@ function initMap() {
         });
         geocoder = new google.maps.Geocoder();
         geocoder.geocode({ 'address': 'Department of Computer Science, University of Oxford'}, geocoderCallBack);
-
+		placeService = new google.maps.places.PlacesService(map);
 };
 
 //initMap();
@@ -77,7 +78,7 @@ var getPhotos = function () {
 		placeId : placeID
 	};
 
-	placeService = new google.maps.places.PlacesService(map);
+	
 	placeService.getDetails(request, handlePlace);
 
 }

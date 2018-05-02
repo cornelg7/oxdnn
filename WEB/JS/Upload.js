@@ -32,6 +32,7 @@ var count = 0; //global variable which counts the uploaded files
 function createXHR(image,name,total) {
 	
 	var xhr = new XMLHttpRequest(); //object to send the data
+	xhr.responseType = "blob" //force the response to be interpreted as a Blob (binary)
 
 	//create HTML elements to show progress
 	var progressDiv = document.getElementById("progressDiv"); //get div where progress is to be showed
@@ -86,11 +87,11 @@ function createXHR(image,name,total) {
 			//write the response into a <p></p> in the outputDiv
 			
 			var reader = new FileReader();
-			var output = document.createElement("img")
+			var output = document.createElement("img") //need to scale the image to some max-width and max-height
+			output.style = 'max.width: 100%'
 			reader.onload =( function(Img) { return function (event) {Img.src = event.target.result;}; }  ) (output)
 			reader.readAsDataURL(xhr.response)
-        	//var paragraph = document.createElement("p")
-			//paragraph.innerHTML = xhr.response;
+        	
 			document.getElementById('outputDiv').appendChild(output)
 			
 			image.classList = ["Uploaded"] //so we know this file was uploaded

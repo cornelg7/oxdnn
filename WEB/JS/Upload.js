@@ -76,6 +76,7 @@ function createXHR(image,name,total) {
     		self.bar.value='100';
     		var text = self.p.innerHTML
     		text = text.replace("uploading", "uploaded")
+    		text = text.concat( " ... analysing picture")
     		self.p.innerHTML = text;
     		//self.spanFile.style.display='none'
     	}, false);
@@ -139,7 +140,7 @@ function UrlUpload(image, url, total) {
 // function which individually sends each picture
 const sendFiles = function () {
 
-	document.getElementById('outputDiv').innerHTML = "" //get rid of old images
+	document.getElementById('outputDiv').innerHTML = "<h3> Result : </h3>" //get rid of old images
 	 
 	var images = document.querySelectorAll(".toBeUploaded") //get all pictures
 

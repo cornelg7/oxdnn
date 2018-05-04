@@ -33,88 +33,94 @@ const mime = {
     // js: 'application/javascript'
 };
 
-const py_temp = __dirname + '/../ML/temp/';
+const temp_dir = __dirname + '/../temp/';
 
 const client = new zerorpc.Client();
 client.connect('tcp://127.0.0.1:44224');
 
-router.post('/upload', function(req, res) {
-    try {
-        req.pipe(req.busboy);
-        req.busboy.on('file', function (fieldname, file, filename) {
-            let uuid = uuidV4();
-            let ext = filename.split('.').pop();
-
-            if (ext === 'jpeg') ext = 'jpg';
-            if (ext !== 'png' && ext !== 'jpg') {
-                return res.status(415).send('Illegal file type!');
-            }
-
-            let u_filename = uuid + '.' + ext;
-
-            let fstream = fs.createWriteStream(py_temp + u_filename);
-            file.pipe(fstream);
-
-            fstream.on('close', function () {
-                if (file.truncated) {
-                    console.log('Rejected: ' + filename + ' (too large)');
-                    deleteFile(py_temp + u_filename);
-                    return res.status(413).send('The file is too large!');
-                }
-
-                console.log('Accepted: ' + filename);
-                    
-                client.invoke("evaluate", u_filename, function(error, nn_res) {                    
-                    if (error) {
-                        console.log('Neural network error: ' + error);
-                        return res.status(500).send('Something went wrong!');
-                    }
-
-                    sendImage(py_temp + u_filename, ext, res, true);
-                });
-            });
-        });
-    } catch (e) {
-        console.log(e);
-        console.log(req);
-        return res.status(500).send('Something went wrong!');
+router.post('/upload-:inf-:outf', function(req, res) {
+    if ((req.params.inf !== 'pic' && req.params.inf !== 'url') ||
+        (req.params.outf !== 'pic' && req.params.outf !== 'list')) {
+        return res.status(400).end();
     }
-});
-
-router.post('/upload-url', function(req, res) {
     try {
-        let u_filename = uuidV4() + '.jpg';
-        let fstream = fs.createWriteStream(py_temp + u_filename);
-        console.log(req.body);
-        request(dummy_url).pipe(fstream);
-
-        fstream.on('close', function () {
-            if (file.truncated) {
-                console.log('Rejected: ' + filename + ' (too large)');
-                deleteFile(py_temp + u_filename);
-                return res.status(413).send('The file is too large!');
-            }
-
-            console.log('Accepted: ' + filename);
-                
-            client.invoke("evaluate", u_filename, function(error, nn_res) {                    
+        let resFun;
+        let uuid = uuidV4();
+        let ext;
+        let u_filename = function() {
+            return uuid + '.' + ext;
+        }
+        if (req.params.outf === 'pic') {
+            resFun = function(error, nn_res) {                    
                 if (error) {
                     console.log('Neural network error: ' + error);
                     return res.status(500).send('Something went wrong!');
                 }
 
-                sendImage(py_temp + u_filename, ext, res, true);
+                sendImage(temp_dir + u_filename(), ext, res, true);
+            };
+        }
+        else {
+            resFun = function(error, nn_res) {                    
+                if (error) {
+                    console.log('Neural network error: ' + error);
+                    return res.status(500).send('Something went wrong!');
+                }
+
+                res.send(nn_res);
+                deleteFile(temp_dir + u_filename());
+            };
+        }
+        if (req.params.inf === 'pic') {
+            req.pipe(req.busboy);
+            req.busboy.on('file', function (fieldname, file, filename) {
+                ext = filename.split('.').pop();
+                if (ext === 'jpeg') ext = 'jpg';
+                if (ext !== 'png' && ext !== 'jpg') {
+                    return res.status(415).send('Illegal file type!');
+                }
+
+                let fstream = fs.createWriteStream(temp_dir + u_filename);
+
+                file.pipe(fstream);
+                fstream.on('close', function () {
+                    if (file.truncated) {
+                        console.log('Rejected: ' + filename + ' (too large)');
+                        deleteFile(temp_dir + u_filename);
+                        return res.status(413).send('The file is too large!');
+                    }
+
+                    console.log('Accepted: ' + filename);
+                        
+                    client.invoke('evaluate', u_filename, resFun);
+                });
             });
-        });
+        }
+        else {
+            ext = '.jpg';
+            let fstream = fs.createWriteStream(temp_dir + u_filename);
+            try {
+                request('https://lh3.googleusercontent.com/p/' + req.body).pipe(fstream);
+                
+                fstream.on('close', function () {
+
+                    console.log('Accepted: ' + req.body);
+
+                    client.invoke('evaluate', u_filename, resFun);
+                });
+            }
+            catch (e) {
+                console.log(e);
+                console.log(req.body);
+                return res.status(400).send('Malformed url suffix!');
+            }
+        }
     } catch (e) {
         console.log(e);
         console.log(req);
-        return res.status(500).send('Something went wrong!');
+        return res.status(500).end();
     }
 });
-
-var dummy_url = 'https://maps.googleapis.com/maps/api/streetview?size=600x300&location=46.414382,10.013988&heading=151.78&pitch=-0.76';
-
 
 function deleteFile(path) {
     fs.unlink(path, (err) => {

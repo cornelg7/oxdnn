@@ -71,7 +71,6 @@ function createXHR(image,name,total) {
 				count = 0;
 				var dropZone = document.getElementById("dropZone");
 				dropZone.innerHTML = ""
-				document.getElementById("progressDiv").innerHTML = '';
 			}
     		self.bar.value='100';
     		var text = self.p.innerHTML
@@ -83,6 +82,7 @@ function createXHR(image,name,total) {
     	
     //handle response
     xhr.onreadystatechange = function() {
+    	
         if (xhr.readyState == 4 && xhr.status != 200) { //4 means DONE; 200 means SUCCESS
             alert("something went wrong: "+xhr.responseText+" server status: "+xhr.status);
         }
@@ -141,6 +141,7 @@ function UrlUpload(image, url, total) {
 const sendFiles = function () {
 
 	document.getElementById('outputDiv').innerHTML = "<h3> Result : </h3>" //get rid of old images
+	document.getElementById("progressDiv").innerHTML = ''; //remove progress bar
 	 
 	var images = document.querySelectorAll(".toBeUploaded") //get all pictures
 

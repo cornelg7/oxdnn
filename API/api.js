@@ -99,22 +99,16 @@ router.post('/upload-:inf-:outf', function(req, res) {
         else {
             ext = 'jpg';
             let fstream = fs.createWriteStream(temp_dir + u_filename());
-            try {
-                console.log (req);
-                request('https://lh3.googleusercontent.com/p/' + req.body).pipe(fstream);
-                
-                fstream.on('close', function () {
+            request().get('https://lh3.googleusercontent.com/p/' + req.body)
+                    .on('error', function(err) {
+                        console.log(err)
+                        return res.status(400).send('Malformed url suffix!');
+                    }).pipe(fstream);
+            fstream.on('close', function () {
+                console.log('Accepted: ' + req.body);
 
-                    console.log('Accepted: ' + req.body);
-
-                    client.invoke('evaluate', u_filename(), resFun);
-                });
-            }
-            catch (e) {
-                console.log(e);
-                console.log(req.body);
-                return res.status(400).send('Malformed url suffix!');
-            }
+                client.invoke('evaluate', u_filename(), resFun);
+            });
         }
     } catch (e) {
         console.log(e);

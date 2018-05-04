@@ -61,6 +61,9 @@ var handlePlace = function (place, status) {
 			image.classList.add('urlToUpload')
 			previewDiv.appendChild(image)
 			console.log(photo)
+			var pos = photo.search("/p/")
+    		var shortUrl = photo.slice(pos+3)
+    		console.log(shortUrl)
 			
 		}
 		

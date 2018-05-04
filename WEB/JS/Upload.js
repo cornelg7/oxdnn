@@ -124,7 +124,12 @@ function UrlUpload(image, url, total) {
 	var xhr = new createXHR(image,'Google image' ,total)
     
     xhr.open("POST", "/upload-url", true);
-    xhr.send(url);
+    
+    //remove irrelevant part of the link
+    var pos = url.search("/p/")
+    var shortUrl = url.slice(pos+3)
+    console.log(shortUrl)
+    xhr.send(shortUrl);
 }
 
 

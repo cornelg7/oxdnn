@@ -80,33 +80,34 @@ router.post('/upload-:inf-:outf', function(req, res) {
                     return res.status(415).send('Illegal file type!');
                 }
 
-                let fstream = fs.createWriteStream(temp_dir + u_filename);
+                let fstream = fs.createWriteStream(temp_dir + u_filename());
 
                 file.pipe(fstream);
                 fstream.on('close', function () {
                     if (file.truncated) {
                         console.log('Rejected: ' + filename + ' (too large)');
-                        deleteFile(temp_dir + u_filename);
+                        deleteFile(temp_dir + u_filename());
                         return res.status(413).send('The file is too large!');
                     }
 
                     console.log('Accepted: ' + filename);
                         
-                    client.invoke('evaluate', u_filename, resFun);
+                    client.invoke('evaluate', u_filename(), resFun);
                 });
             });
         }
         else {
-            ext = '.jpg';
-            let fstream = fs.createWriteStream(temp_dir + u_filename);
+            ext = 'jpg';
+            let fstream = fs.createWriteStream(temp_dir + u_filename());
             try {
+                console.log (req);
                 request('https://lh3.googleusercontent.com/p/' + req.body).pipe(fstream);
                 
                 fstream.on('close', function () {
 
                     console.log('Accepted: ' + req.body);
 
-                    client.invoke('evaluate', u_filename, resFun);
+                    client.invoke('evaluate', u_filename(), resFun);
                 });
             }
             catch (e) {

@@ -54,7 +54,9 @@ router.post('/upload-:inf-:outf', function(req, res) {
             resFun = function(error, nn_res) {                    
                 if (error) {
                     console.log('Neural network error: ' + error);
-                    return res.status(500).send('Something went wrong!');
+                    res.status(500).send('Something went wrong!');
+                    deleteFile(temp_dir + u_filename());
+                    return;
                 }
 
                 sendImage(temp_dir + u_filename(), ext, res, true);
@@ -62,13 +64,15 @@ router.post('/upload-:inf-:outf', function(req, res) {
         }
         else {
             resFun = function(error, nn_res) {                    
+                deleteFile(temp_dir + u_filename());
+
                 if (error) {
                     console.log('Neural network error: ' + error);
-                    return res.status(500).send('Something went wrong!');
+                    res.status(500).send('Something went wrong!');
+                    return;
                 }
 
                 res.send(nn_res);
-                deleteFile(temp_dir + u_filename());
             };
         }
         if (req.params.inf === 'pic') {
@@ -77,7 +81,8 @@ router.post('/upload-:inf-:outf', function(req, res) {
                 ext = filename.split('.').pop();
                 if (ext === 'jpeg') ext = 'jpg';
                 if (ext !== 'png' && ext !== 'jpg') {
-                    return res.status(415).send('Illegal file type!');
+                    res.status(415).send('Illegal file type!');
+                    return;
                 }
 
                 let fstream = fs.createWriteStream(temp_dir + u_filename());
@@ -87,7 +92,8 @@ router.post('/upload-:inf-:outf', function(req, res) {
                     if (file.truncated) {
                         console.log('Rejected: ' + filename + ' (too large)');
                         deleteFile(temp_dir + u_filename());
-                        return res.status(413).send('The file is too large!');
+                        res.status(413).send('The file is too large!');
+                        return;
                     }
 
                     console.log('Accepted: ' + filename);
@@ -97,23 +103,26 @@ router.post('/upload-:inf-:outf', function(req, res) {
             });
         }
         else {
-            ext = 'jpg';
-            let fstream = fs.createWriteStream(temp_dir + u_filename());
-            request().get('https://lh3.googleusercontent.com/p/' + req.body)
-                    .on('error', function(err) {
-                        console.log(err)
-                        return res.status(400).send('Malformed url suffix!');
-                    }).pipe(fstream);
-            fstream.on('close', function () {
-                console.log('Accepted: ' + req.body);
+            request('https://lh3.googleusercontent.com/p/' + req.body)
+            .on('response', function(response) {
+                if(response.statusCode != 200) {
+                    res.status(400).send('Malformed url suffix!');
+                    return;
+                }
+                else {
+                    ext = 'jpg';
+                    let fstream = fs.createWriteStream(temp_dir + u_filename());
+                    response.pipe(fstream);
+                    fstream.on('close', function () {
+                        console.log('Accepted: ' + req.body);
 
-                client.invoke('evaluate', u_filename(), resFun);
+                        client.invoke('evaluate', u_filename(), resFun);
+                    });
+                }
             });
         }
     } catch (e) {
         console.log(e);
-        console.log(req);
-        return res.status(500).end();
     }
 });
 

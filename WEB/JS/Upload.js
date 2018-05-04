@@ -71,7 +71,7 @@ function createXHR(image,name,total) {
 				count = 0;
 				var dropZone = document.getElementById("dropZone");
 				dropZone.innerHTML = ""
-				//document.getElementById("progressDiv").innerHTML = '';
+				document.getElementById("progressDiv").innerHTML = '';
 			}
     		self.bar.value='100';
     		var text = self.p.innerHTML
@@ -98,6 +98,7 @@ function createXHR(image,name,total) {
 	        text = text.replace("uploaded", "")
             self.p.innerHTML = text
 			document.getElementById('outputDiv').appendChild(output)
+			document.getElementById('outputDiv').style.display='' //ensure its visible
 			
 			image.classList = ["Uploaded"] //so we know this file was uploaded
         }
@@ -137,6 +138,8 @@ function UrlUpload(image, url, total) {
 
 // function which individually sends each picture
 const sendFiles = function () {
+
+	document.getElementById('outputDiv').innerHTML = "" //get rid of old images
 	 
 	var images = document.querySelectorAll(".toBeUploaded") //get all pictures
 

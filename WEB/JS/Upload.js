@@ -69,6 +69,8 @@ function createXHR(image,name,total) {
 			if(count == total) { //when all images are uploade
 				document.forms[0].reset(); //this should reset the form (because the file are uploaded)
 				count = 0;
+				var dropZone = document.getElementById("dropZone");
+				dropZone.innerHTML = ""
 				//document.getElementById("progressDiv").innerHTML = '';
 			}
     		self.bar.value='100';
@@ -88,7 +90,7 @@ function createXHR(image,name,total) {
 			
 			var reader = new FileReader();
 			var output = document.createElement("img") //need to scale the image to some max-width and max-height
-			output.style = 'max-width: 100%'
+			output.style = 'max-width: 100%; max-height: 1080px'
 			reader.onload =( function(Img) { return function (event) {Img.src = event.target.result;}; }  ) (output)
 			reader.readAsDataURL(xhr.response)
         	var text = self.p.innerHTML
@@ -114,7 +116,7 @@ function FileUpload(image, file, total) {
 	formData.append('picture', file);//add prefix to file
     
     //here we open the request to upload, the second argument is the .php file to call on the server
-	xhr.open("POST", "/upload", true);
+	xhr.open("POST", "/upload-pic-pic", true);
 	xhr.send(formData);
 
 }
@@ -123,7 +125,7 @@ function UrlUpload(image, url, total) {
 
 	var xhr = new createXHR(image,'Google image' ,total)
     
-    xhr.open("POST", "/upload-url", true);
+    xhr.open("POST", "/upload-url-pic", true);
     
     //remove irrelevant part of the link
     var pos = url.search("/p/")

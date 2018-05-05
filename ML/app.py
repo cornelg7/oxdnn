@@ -4,7 +4,7 @@ import keras
 import logging
 import matplotlib.pyplot as plt
 
-from keras_retinanet.models.resnet import custom_objects
+from keras_retinanet import models
 
 from .utils.evaluate import evaluate
 
@@ -15,9 +15,9 @@ class EvaluationRPC(object):
         model_path = os.path.join(
             '..', 'trained_snapshots', 'resnet50_csv_02.h5'
         )
-        self.model = keras.models.load_model(
+        self.model = models.load_model(
             model_path,
-            custom_objects=custom_objects
+            backbone_name='resnet50'
         )
         logger.info('Loaded model successfully')
 

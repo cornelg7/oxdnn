@@ -1,5 +1,8 @@
 <resources>
-    <string name="app_name">NeuralNetwork</string>
-    <string name="channel_name">NeuralNetwork</string>
-    <string name="channel_description">NeuralNetwork service to take photos</string>
+    <string name="app_name">DeeplyDecodedDisability</string>
+    <string name="channel_name">DeeplyDecodedDisability</string>
+    <string name="channel_description">DeeplyDecodedDisability service to take photos</string>
+    <string name="title_activity_maps">Map</string>
+    <string name="SleepModeExp">Connect your headphones and press the play button to use me.\nI\'ll take a picture, analyse it and tell you the result\n\np.s.: you can even lock the phone and I\'ll be waiting for your instructions</string>
+    <string name="runButton">Analyse</string>
 </resources>

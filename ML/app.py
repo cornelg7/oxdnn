@@ -38,7 +38,7 @@ class EvaluationRPC(object):
         evaluation = evaluate(
             image_path,
             model,
-            return_image=annotate_image
+            return_image=True
         )
 
         plt.imsave(

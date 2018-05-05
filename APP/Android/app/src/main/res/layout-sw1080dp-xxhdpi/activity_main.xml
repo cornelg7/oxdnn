@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="oxfordteam5.neuralnetwork.MainActivity">
+    tools:context="oxfordteam5.DeeplyDecodedDisability.MainActivity">
 
     <Button
         android:id="@+id/Options"
@@ -88,8 +88,8 @@
                 android:id="@+id/instantPicture"
                 android:layout_width="160dp"
                 android:layout_height="wrap_content"
-                android:onClick="takePicture"
-                android:text="Take Picture" />
+                android:onClick="PlacePicker"
+                android:text="use address" />
 
 
         </LinearLayout>
@@ -131,7 +131,7 @@
             android:layout_gravity="fill_horizontal"
             android:layout_marginBottom="20dp"
             android:onClick="runNeuralNetwork"
-            android:text="RUN" />
+            android:text="@string/runButton" />
 
 
     </GridLayout>

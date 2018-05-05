@@ -59,7 +59,7 @@ router.post('/upload-:inf-:outf', function(req, res) {
                     return;
                 }
 
-                sendImage(temp_dir + nn_res["outimage"], ext, res, true);
+                sendImage(nn_res["outimage"], ext, res, true);
             };
         }
         else {

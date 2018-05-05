@@ -13,7 +13,7 @@ logger = logging.getLogger(__name__)
 class EvaluationRPC(object):
     def __init__(self):
         model_path = os.path.join(
-            '..', 'trained_snapshots', 'resnet50_csv_02.h5'
+            '.', 'trained_snapshots', 'resnet50_csv_02.h5'
         )
         self.model = models.load_model(
             model_path,

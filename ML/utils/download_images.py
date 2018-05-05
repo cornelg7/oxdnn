@@ -21,7 +21,7 @@ if 'tag' in args:
 for url in rows:
 	try:
 		r = requests.get(url, timeout=60)
-		p = os.path.sep.join([args["output"], "{}.jpg".format(str(total).zfill(4))])
+		p = os.path.sep.join([args["output"], filename.format(str(total).zfill(4))])
 		f = open(p, 'wb')
 		f.write(r.content)
 		f.close()
@@ -29,6 +29,6 @@ for url in rows:
 		print('Downloaded {}'.format(p))
 		total += 1
 	except:
-        print('Skipped {}'.format(p))
+		print('Skipped {}'.format(p))
 
 # Could do some verification on each image to check downloaded properly here #

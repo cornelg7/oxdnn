@@ -3,6 +3,7 @@ appnope==0.1.0
 astor==0.6.2
 bleach==1.5.0
 click==6.6
+cntk=2.5.1
 cycler==0.10.0
 decorator==4.2.1
 entrypoints==0.2.3
@@ -58,8 +59,6 @@ scipy==1.0.0
 Send2Trash==1.5.0
 simplegeneric==0.8.1
 six==1.11.0
-tensorboard==1.6.0
-tensorflow==1.6.0
 termcolor==1.1.0
 terminado==0.8.1
 testpath==0.3.1

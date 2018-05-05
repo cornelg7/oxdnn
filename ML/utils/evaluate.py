@@ -56,7 +56,7 @@ def evaluate(file_path, model, return_image=False, debug=False):
         label = labels_to_classes[predicted_labels[i]]
         score = scores[i]
 
-        classes_found.append((label, score))
+        classes_found.append(label)
 
         # TODO: write own version with better presentation
         if return_image:

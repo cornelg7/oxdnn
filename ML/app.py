@@ -30,27 +30,27 @@ class EvaluationRPC(object):
 
     def evaluate(self, filename):
         image_path = os.path.expanduser(os.path.join(
-            '~', 'oxdnn', 'temp'
+            '~', 'oxdnn', 'temp', filename
         ))
 
-        logger.info('Received evaluation request for {}'.format(image_path+filename))
+        logger.info('Received evaluation request for {}'.format(image_path))
 
         evaluation = evaluate(
-            os.path.join(image_path, filename),
+            image_path,
             model,
             return_image=annotate_image
         )
 
-        outpath = os.path.join(image_path, 'annotated_'+filename),
         plt.imsave(
-            outpath,
+            # overwrite original
+            image_path,
             evaluation['image']
         )
 
-        logger.info('Saved annotated image at {}'.format(outpath))
+        logger.info('Saved annotated image at {}'.format(image_path))
 
         return {
-            'outimage': 'annotated_'+filename,
+            'outimage': image_path,
             'classes': evaluation['classes']
         }
 

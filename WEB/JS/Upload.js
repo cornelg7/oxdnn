@@ -69,17 +69,20 @@ function createXHR(image,name,total) {
 			if(count == total) { //when all images are uploade
 				document.forms[0].reset(); //this should reset the form (because the file are uploaded)
 				count = 0;
-				//document.getElementById("progressDiv").innerHTML = '';
+				var dropZone = document.getElementById("dropZone");
+				dropZone.innerHTML = ""
 			}
     		self.bar.value='100';
     		var text = self.p.innerHTML
     		text = text.replace("uploading", "uploaded")
+    		text = text.concat( " ... analysing picture")
     		self.p.innerHTML = text;
     		//self.spanFile.style.display='none'
     	}, false);
     	
     //handle response
     xhr.onreadystatechange = function() {
+    	
         if (xhr.readyState == 4 && xhr.status != 200) { //4 means DONE; 200 means SUCCESS
             alert("something went wrong: "+xhr.responseText+" server status: "+xhr.status);
         }
@@ -88,7 +91,7 @@ function createXHR(image,name,total) {
 			
 			var reader = new FileReader();
 			var output = document.createElement("img") //need to scale the image to some max-width and max-height
-			output.style = 'max-width: 100%'
+			output.style = 'max-width: 100%; max-height: 1080px'
 			reader.onload =( function(Img) { return function (event) {Img.src = event.target.result;}; }  ) (output)
 			reader.readAsDataURL(xhr.response)
         	var text = self.p.innerHTML
@@ -96,6 +99,7 @@ function createXHR(image,name,total) {
 	        text = text.replace("uploaded", "")
             self.p.innerHTML = text
 			document.getElementById('outputDiv').appendChild(output)
+			document.getElementById('outputDiv').style.display='' //ensure its visible
 			
 			image.classList = ["Uploaded"] //so we know this file was uploaded
         }
@@ -114,7 +118,7 @@ function FileUpload(image, file, total) {
 	formData.append('picture', file);//add prefix to file
     
     //here we open the request to upload, the second argument is the .php file to call on the server
-	xhr.open("POST", "/upload", true);
+	xhr.open("POST", "/upload-pic-pic", true);
 	xhr.send(formData);
 
 }
@@ -123,7 +127,7 @@ function UrlUpload(image, url, total) {
 
 	var xhr = new createXHR(image,'Google image' ,total)
     
-    xhr.open("POST", "/upload-url", true);
+    xhr.open("POST", "/upload-url-pic", true);
     
     //remove irrelevant part of the link
     var pos = url.search("/p/")
@@ -135,6 +139,9 @@ function UrlUpload(image, url, total) {
 
 // function which individually sends each picture
 const sendFiles = function () {
+
+	document.getElementById('outputDiv').innerHTML = "<h3> Result : </h3>" //get rid of old images
+	document.getElementById("progressDiv").innerHTML = ''; //remove progress bar
 	 
 	var images = document.querySelectorAll(".toBeUploaded") //get all pictures
 

@@ -59,7 +59,7 @@ router.post('/upload-:inf-:outf', function(req, res) {
                     return;
                 }
 
-                sendImage(temp_dir + u_filename(), ext, res, true);
+                sendImage(temp_dir + nn_res["outimage"], ext, res, true);
             };
         }
         else {
@@ -71,8 +71,8 @@ router.post('/upload-:inf-:outf', function(req, res) {
                     res.status(500).send('Something went wrong!');
                     return;
                 }
-
-                res.send(nn_res);
+                // needs testing
+                res.send(nn_res["classes"]);
             };
         }
         if (req.params.inf === 'pic') {

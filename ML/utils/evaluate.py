@@ -73,7 +73,7 @@ def evaluate(file_path, model, return_image=False, debug=False):
 
     return {
         'classes': classes_found,
-        'image': image if return_image else None
+        'image': draw if return_image else None
     }
 
 

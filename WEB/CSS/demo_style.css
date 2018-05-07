@@ -26,6 +26,8 @@ LOOK AT STYLE.CSS TO SEE THE SETTINGS COMMON TO ALL PAGES*/
 	float: left;
 }
 
+}
+
 /*--------------------------*/
 
 /* form style */
@@ -37,7 +39,7 @@ form {
 }
 
 #fileUploading {
-	width: 13rem;
+	max-width: 20rem;
 }
 
 /*-------------------------------*/

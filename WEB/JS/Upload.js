@@ -18,6 +18,8 @@ const handlePicture = function(files) {
 		
 		previewDiv.appendChild(image)
 		
+		image.addEventListener('click', new delElem(image))
+		
 		var reader = new FileReader()
 		reader.onload =( function( Img) { return function (event) {Img.src = event.target.result;}; }  ) (image)
 		reader.readAsDataURL(file)
@@ -27,6 +29,13 @@ const handlePicture = function(files) {
 }
 
 var count = 0; //global variable which counts the uploaded files
+
+function delElem(element) {
+
+	return function(e) {
+		element.parentNode.removeChild(element)
+	}
+}
 
 
 function createXHR(image,name,total) {

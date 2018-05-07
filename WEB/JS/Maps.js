@@ -102,7 +102,7 @@ var findPlaceID = function(results, status) {
 //function which place a marker where the user double-click
 var placeMarker = function (ev) {
 
-	LatLng pos = ev.LatLng;
+	var pos = ev.LatLng;
 	marker.setPosition(pos);
 	
 	geocoder.geocode({'location': pos}, findPlaceID); //update placeID

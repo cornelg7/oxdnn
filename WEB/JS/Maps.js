@@ -55,6 +55,7 @@ var handlePlace = function (place, status) {
 		
 		var previewDiv = document.getElementById("dropZone")
 
+		if(place.photos == null) alert('No photos was found at the give location; try using an address')
 		for (var i =0; i < place.photos.length; i++) {
 			var photo = place.photos[i].getUrl({'maxWidth': 1080, 'maxHeight': 1080}); //get photo url
 			//create photo thumbnail

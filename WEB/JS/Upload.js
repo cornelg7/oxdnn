@@ -91,7 +91,7 @@ function createXHR(image,name,total) {
 			
 			var reader = new FileReader();
 			var output = document.createElement("img") //need to scale the image to some max-width and max-height
-			output.style = 'max-width: 100%; max-height: 1080px'
+			output.style = 'max-width: 100%; max-height: 1080px; margin-left: auto; margin-right: auto; margin-bottom: 2rem; background-color: grey'
 			reader.onload =( function(Img) { return function (event) {Img.src = event.target.result;}; }  ) (output)
 			reader.readAsDataURL(xhr.response)
         	var text = self.p.innerHTML

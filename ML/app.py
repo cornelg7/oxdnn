@@ -15,7 +15,7 @@ logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
 model_path = os.path.expanduser(os.path.join(
-    '~', 'oxdnn', 'ML', 'trained_snapshots', 'resnet50_csv_02.h5'
+    '~', 'oxdnn', 'ML', 'trained_snapshots', 'resnet50_csv_10.h5'
 ))
 model = keras.models.load_model(
     model_path,

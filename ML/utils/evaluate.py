@@ -13,7 +13,9 @@ from .display import label_colour
 labels_to_classes = {
     0: 'Disabled Parking Sign',
     1: 'Disabled Parking Space',
-    2: 'Ramp without rail ing'
+    2: 'Ramp without Railing',
+    3: 'Chair Lift',
+    4: 'Ramp with Railing'
 }
 
 THRESHOLD = 0.5

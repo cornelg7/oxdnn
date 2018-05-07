@@ -34,6 +34,11 @@ const mime = {
 };
 
 const temp_dir = __dirname + '/../temp/';
+const apk_file = __dirname + '/../download/app.apk';
+
+router.get('/getapp', function(req, res) {
+    res.download(apk_file);
+});
 
 const client = new zerorpc.Client();
 client.connect('tcp://127.0.0.1:44224');

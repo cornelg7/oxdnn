@@ -102,7 +102,7 @@ var findPlaceID = function(results, status) {
 //function which place a marker where the user double-click
 var placeMarker = function (ev) {
 
-	var pos = ev.latLng);
+	var pos = ev.latLng;
 	//console.log(pos)
 	marker.setPosition(pos);
 	

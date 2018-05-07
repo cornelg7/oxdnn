@@ -170,7 +170,7 @@ const MaxFileSize = 10485760; //10 MB
 //this function checks the file which are being uploaded
 const checkFile = function (file) {
 
-	var regex = /^(image\/)(gif|(x-)?png|p?jpeg)$/i;
+	var regex = /^(image\/)((x-)?png|p?jpeg)$/i;
 				
 	if( file.size >= MaxFileSize){
 		alert('File size: '+ files.size + 'B; - File too big')

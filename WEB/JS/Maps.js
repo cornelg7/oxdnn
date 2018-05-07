@@ -15,6 +15,8 @@ function initMap() {
           zoom: 17,
           mapTypeId: 'satellite'
         });
+        
+        map.addListener('click',placeMarker);
         geocoder = new google.maps.Geocoder();
         geocoder.geocode({ 'address': 'Department of Computer Science, University of Oxford'}, geocoderCallBack);
 		placeService = new google.maps.places.PlacesService(map);
@@ -85,3 +87,27 @@ var getPhotos = function () {
 	placeService.getDetails(request, handlePlace);
 
 }
+
+//get placeID from geocode response
+var findPlaceID = function(results, status) {
+
+      if (status == 'OK') {
+        map.setCenter(results[0].geometry.location);
+        placeID = results[0].place_id; //get place id
+      } else {
+        alert('Geocode was not successful for the following reason: ' + status);
+      }
+    }
+
+//function which place a marker where the user double-click
+var placeMarker = function (event) {
+
+	LatLng pos = event.LatLng;
+	marker.setPosition(pos);
+	
+	geocoder.geocode({'location': pos}, findPlaceID); //update placeID
+}
+
+
+
+

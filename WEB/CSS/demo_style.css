@@ -9,10 +9,12 @@ LOOK AT STYLE.CSS TO SEE THE SETTINGS COMMON TO ALL PAGES*/
 	margin-bottom: 2rem;
 	top: 1rem;
 	position: relative;
-	height: 20rem;
+	height: 21rem;
 	display: block;
 	background-color: rgb(44, 131, 209);
 	background-image: url('../res/DropZone.png');
+	background-repeat: no-repeat;
+	background-position: center;
 	overflow: auto; /*scroll bar will appear when necessary*/
 }
 

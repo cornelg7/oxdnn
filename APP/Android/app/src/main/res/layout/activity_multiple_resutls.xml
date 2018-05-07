@@ -33,6 +33,7 @@
         android:layout_marginBottom="8dp"
         android:layout_marginTop="8dp"
         android:text="TextView"
+        android:visibility="invisible"
         app:layout_constraintBottom_toTopOf="@+id/scrollView2"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"

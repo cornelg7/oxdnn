@@ -33,8 +33,11 @@ import com.google.android.gms.location.places.ui.PlacePicker;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 
+import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
+import java.io.FileReader;
 import java.io.IOException;
 import java.util.LinkedList;
 import java.util.List;
@@ -297,6 +300,7 @@ public class MainActivity extends AppCompatActivity {
                 int column_index = cursor.getColumnIndexOrThrow(MediaStore.Images.Media.DATA);
                 cursor.moveToFirst();
                 photoDir = cursor.getString(column_index);
+
             } finally {
                 if (cursor != null) {
                     cursor.close();
@@ -307,10 +311,27 @@ public class MainActivity extends AppCompatActivity {
             Image = new File (photoURI.toString());
             gallery = true;
             util.displayImage(mImageView,errorMessage,rotateBitmap,photoDir);
+            Log.e("ads",photoDir);
         }
         else if (requestCode == PLACE_PICKER && resultCode == RESULT_OK) { //we got a place
 
+            mImageView.setImageDrawable( getResources().getDrawable(R.drawable.gears));
+            mImageView.setVisibility(View.VISIBLE);
+
             String placeID = PlacePicker.getPlace( this, data).getId(); //get place ID
+
+            //create log file and write 0 in it
+            try {
+                File logFile = new File(MainActivity.this.getExternalFilesDir(null),"log.txt");
+                if(!logFile.exists()) logFile.createNewFile();
+                FileOutputStream stream = new FileOutputStream(logFile);
+                String zero = "0";
+                stream.write(zero.getBytes());
+                stream.close();
+            } catch (IOException e) {
+                e.printStackTrace();
+                return;
+            }
 
             Task<PlacePhotoMetadataResponse> photosResponse = myClient.getPlacePhotos(placeID);
             //now set what to do when the task is completed
@@ -320,9 +341,10 @@ public class MainActivity extends AppCompatActivity {
 
                     PlacePhotoMetadataResponse response = task.getResult(); // get response
                     PlacePhotoMetadataBuffer photoBuffer = response.getPhotoMetadata(); //get buffer with list of photos
-                    int bufferSize = photoBuffer.getCount();
+                    final int bufferSize = photoBuffer.getCount();
 
-                    final List<Pair<String,String>> FileList = new LinkedList<Pair<String,String>>(); //list of pair path/name of file to upload
+                    final Intent multipleUploads = new Intent(MainActivity.this, MultipleResutlsActivity.class);
+                    multipleUploads.putExtra("filesNumber", bufferSize);
 
                     for (int i=0; i<bufferSize; i++) { //for each photo download it and save it in the device
 
@@ -333,9 +355,12 @@ public class MainActivity extends AppCompatActivity {
                         pictureResponse.addOnCompleteListener(new OnCompleteListener<PlacePhotoResponse>() {
                             @Override
                             public void onComplete(@NonNull Task<PlacePhotoResponse> task) {
+
                                 Bitmap bitmap = task.getResult().getBitmap(); //get bitmap
+
+                                //save bitmap to file
                                 FileOutputStream savePhoto = null;
-                                File storageDir= Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES);
+                                File storageDir= MainActivity.this.getExternalFilesDir(Environment.DIRECTORY_PICTURES);
                                 File image = null;
                                 try {
                                     image = File.createTempFile("IMG", ".png", storageDir);
@@ -345,25 +370,41 @@ public class MainActivity extends AppCompatActivity {
                                 } catch ( Exception e) {
                                     e.printStackTrace();
                                 }
-                                FileList.add(new Pair<String, String>(image.getAbsolutePath(), image.getName()));
-                            } //end of onComplete for pictureResponse
+
+                                //look at log and increase counter
+                                int count =0;
+                                try {
+                                    File logFile = new File(MainActivity.this.getExternalFilesDir(null),"log.txt");
+                                    FileReader file = new FileReader(logFile);
+                                    BufferedReader read = new BufferedReader(file);
+                                    String line = read.readLine(); //read line
+                                    read.close();
+                                    file.close();
+                                    count = Integer.parseInt(line); //get counter
+                                    FileOutputStream stream = new FileOutputStream(logFile);
+                                    stream.write(Integer.toString(count+1).getBytes()); //output new counter
+                                    stream.close();
+                                } catch (Exception e) {
+                                    e.printStackTrace();
+                                    return;
+                                }
+
+                                multipleUploads.putExtra("path"+count, image.getAbsolutePath());
+                                multipleUploads.putExtra("name"+count,image.getName());
+
+
+                                if (count == bufferSize-1) { //the this was last photo
+                                    startActivity(multipleUploads);
+                                }
+
+                            } //end of onComplete for pictureResponse (getPhoto)
                         });
 
                     } //end of loop
 
                     photoBuffer.release();
 
-                    //in this point FileList contains everything that needs to be uploaded
-
-                    Intent multipleUploads = new Intent(MainActivity.this, MultipleResutlsActivity.class);
-                    multipleUploads.putExtra("filesNumber", FileList.size());
-                    for (int i =0; i < FileList.size(); i++) {
-                        multipleUploads.putExtra("path"+i, FileList.get(i).getLeft());
-                        multipleUploads.putExtra("name"+i,FileList.get(i).getRight());
-                    }
-
-                    startActivity(multipleUploads);
-                } //end of onComplete for photoResponse
+                } //end of onComplete for photoResponse (getPlacePhotos)
             });
         }
 

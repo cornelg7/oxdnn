@@ -12,6 +12,7 @@ LOOK AT STYLE.CSS TO SEE THE SETTINGS COMMON TO ALL PAGES*/
 	height: 20rem;
 	display: block;
 	background-color: rgb(44, 131, 209);
+	background-image: url('../res/DropZone.png');
 	overflow: auto; /*scroll bar will appear when necessary*/
 }
 

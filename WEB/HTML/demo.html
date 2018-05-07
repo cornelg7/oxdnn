@@ -25,16 +25,22 @@
 
 		<div class="jumbotron">
 
-			<div class="row" style="padding-top:30px;"> 
+			<div class="row" style="padding-top:30px;">
 				<div class="col-sm-12 text-center">
 					<h1> Pictures ready for upload: </h1>
-				</div>
+				</div> 
 			</div>
 			
 			<!-- the drop zone -->
 			<div class="row">
 				<div class="col-sm-12">
 					<div class="dragDrop" id ="dropZone"> </div>
+				</div>
+			</div>
+
+			<div class="row" style="padding-top:30px;"> 
+				<div class="col-sm-12 text-center">
+					<button type="button" class="btn btn-primary btn-lg" id="RunButton" onclick="show('outputDiv')"> Upload </button>
 				</div>
 			</div>
 
@@ -88,14 +94,6 @@
 				</div>
 			</div>
 			
-			<!-- row for the button which uploads the files in drop zone -->
-			<div class="row">
-				<div class="col-sm-12 text-center">
-					<button type="button" class="btn btn-primary btn-lg" id="RunButton" onclick="show('outputDiv')"> Upload </button>
-				</div>
-			</div>
-
-
 			<!-- rows for displaying the output -->
 			<div class="row">
 				<div id="progressDiv"> </div>

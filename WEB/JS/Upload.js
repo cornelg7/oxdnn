@@ -31,7 +31,6 @@ const handlePicture = function(files) {
 var count = 0; //global variable which counts the uploaded files
 
 function delElem(element) {
-
 	return function(e) {
 		element.parentNode.removeChild(element)
 	}

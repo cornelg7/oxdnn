@@ -66,6 +66,7 @@ var handlePlace = function (place, status) {
 			image.src= photo
 			image.classList.add('urlToUpload')
 			previewDiv.appendChild(image)
+			image.addEventListener('click', new delElem(image))
 			console.log(photo)
 			var pos = photo.search("/p/")
     		var shortUrl = photo.slice(pos+3)
@@ -75,6 +76,12 @@ var handlePlace = function (place, status) {
 		
 	} else {
 		alert('Google cannot find the place requested: '+ status);
+	}
+}
+
+function delElem(element) {
+	return function(e) {
+		element.parentNode.removeChild(element)
 	}
 }
 

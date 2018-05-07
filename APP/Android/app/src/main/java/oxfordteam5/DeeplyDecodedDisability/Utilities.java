@@ -135,7 +135,11 @@ public class Utilities {
 
             try {
 
-                if(voice != null) return response.body().string();
+                if(voice != null) {
+                    String str = response.body().string();
+                    Log.e("response",str );
+                    return str;
+                }
                 else {
                     // response is an image, so i save it
                     File storageDir = context.getExternalFilesDir(Environment.DIRECTORY_PICTURES);
@@ -165,7 +169,7 @@ public class Utilities {
             Utilities.working = false;
 
             //if(message!= null) message.setText(result);
-            new Utilities(context).displayImage(view, message, false, result); //display image
+            if(voice ==null) new Utilities(context).displayImage(view, message, false, result); //display image
 
             new File(result).delete();
 
@@ -275,6 +279,17 @@ public class Utilities {
             }
             settings.inJustDecodeBounds = false;
             Bitmap ScaledBitmap = BitmapFactory.decodeFile(photoDir, settings); //this time the bitmap is returned
+
+            if(ScaledBitmap.getHeight() < 600 && ScaledBitmap.getWidth() < 600) { //too small, scale up
+                float scaleFactor;
+                if (ScaledBitmap.getWidth() > ScaledBitmap.getHeight()) scaleFactor = 1080 / ScaledBitmap.getWidth();
+                else scaleFactor = 1080 / ScaledBitmap.getHeight();
+
+                Matrix matrix = new Matrix();
+                matrix.postScale(scaleFactor,scaleFactor);
+                ScaledBitmap = Bitmap.createBitmap(ScaledBitmap, 0,0,ScaledBitmap.getWidth(), ScaledBitmap.getHeight(),matrix, true);
+            }
+
             Bitmap bitmap = null;
 
             if (rotateBitmap) { //rotate picture to better fit the screen size

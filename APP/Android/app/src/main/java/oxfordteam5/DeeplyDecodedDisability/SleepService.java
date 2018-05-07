@@ -81,7 +81,7 @@ public class SleepService extends Service {
                 Log.e(TAG, "onPlay called (media button pressed)");
                 Image = util.Image;
 
-                util.takePictureAndUpload(Image, focusCamera,saveImages,true,null,null,voice); //should not be false
+                util.takePictureAndUpload(Image, focusCamera,saveImages,true,null,null,voice);
 
                 super.onPlay();
             }
@@ -113,8 +113,8 @@ public class SleepService extends Service {
     private void createNotification () {
 
         NotificationCompat.Builder builder = new NotificationCompat.Builder(this, "SleepService");
-        builder.setSmallIcon(R.drawable.gearn4)
-                .setContentTitle("Sleep Service for NeuralNetwork")
+        builder.setSmallIcon(R.drawable.app_icon)
+                .setContentTitle("Sleep Service for DeeplyDecodedDisability")
                 .setContentText("Use your headphones to take pictures and analyse them")
                 .setStyle(new NotificationCompat.BigTextStyle().bigText("Use your headphones to take pictures and analyse them"))
                 .setPriority(NotificationCompat.PRIORITY_DEFAULT)

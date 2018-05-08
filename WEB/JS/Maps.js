@@ -88,13 +88,13 @@ var getPhotos = function () {
 	if (placeID == null) return; //no place to query
 	var limit = 5
 	if (placeID.length < 5) limit = placeID.length
-	for (var i =0; i< placeID.length; i++) {
+	for (var i =0; i< limit; i++) {
 		var request = {
 		placeId : placeID[i]
 		};
 		placeService.getDetails(request, handlePlace);
 	}
-	
+	placeID = []
 
 }
 
@@ -102,14 +102,14 @@ var getPhotos = function () {
 var searchCallback = function (results, status) {
   if (status == google.maps.places.PlacesServiceStatus.OK) {
   	if(results.length==0) {
-  		alert('Sorry no place found near that position; try using an address')
+  		alert('Sorry no place found near one of the positions')
   		return;
   	}
   	for (var i =0; i< results.length; i++) {
   		if (isLocality(results[i])) continue; 
   		placeID.push( results[i].place_id)
   	}
-  	placeID = results[0].place_id
+  	
   }
 }
 

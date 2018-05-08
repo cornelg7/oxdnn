@@ -7,6 +7,7 @@ var geocoder;
 var placeService;
 var marker = null;
 var placeID= null;
+var radiusSearch = '10';
 
 //initialise map and geocoder
 function initMap() {
@@ -95,18 +96,34 @@ var getPhotos = function () {
 
 }
 
+//callback for search nearby method
+var searchCallback = function (results, status) {
+  if (status == google.maps.places.PlacesServiceStatus.OK) {
+  	if(results.length==0) {
+  		alert('Sorry no place found near that position; try using an address')
+  		return;
+  	}
+  	placeID = results[0].place_id
+  }
+}
+
 //get placeID from geocode response
 var findPlaceID = function(results, status) {
 
       if (status == 'OK') {
         map.setCenter(results[0].geometry.location);
-        placeID = results[0].place_id; //get place id
+        
+        var request = {
+        	location: results[0].geometry.location,
+    		radius: radiusSearch
+        }
+        placeService.nearbySearch(request, searchCallback); //here we look for a place nearby
       } else {
         alert('Geocode was not successful for the following reason: ' + status);
       }
     }
 
-//function which place a marker where the user double-click
+//function which place a marker where the user click
 var placeMarker = function (ev) {
 
 	var pos = ev.latLng;
@@ -116,6 +133,12 @@ var placeMarker = function (ev) {
 	geocoder.geocode({ 'location': pos}, findPlaceID); //update placeID
 }
 
+//get precision decided by user
+var getPrecision = function() {
+
+	radiusSearch = document.getElementById('precision').value
+
+}
 
 
 

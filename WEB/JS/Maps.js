@@ -7,7 +7,7 @@ var geocoder;
 var placeService;
 var marker = null;
 var placeID= null;
-var radiusSearch = '20';
+var radiusSearch = '30';
 
 //initialise map and geocoder
 function initMap() {
@@ -76,12 +76,6 @@ var handlePlace = function (place, status) {
 		
 	} else {
 		alert('Google cannot find the place requested: '+ status);
-	}
-}
-
-function delElem(element) {
-	return function(e) {
-		element.parentNode.removeChild(element)
 	}
 }
 

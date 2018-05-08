@@ -35,6 +35,10 @@ var count = 0; //global variable which counts the uploaded files
 function delElem(element) {
 	return function(e) {
 		element.parentNode.removeChild(element)
+		var tooltips = document.querySelectorAll(".tooltip")
+		for (var i =0; i<tooltips.length; i++) {
+			tooltips[i].parentNode.removeChild(tooltips[i])
+		}
 	}
 }
 

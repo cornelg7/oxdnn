@@ -87,7 +87,7 @@ var getPhotos = function () {
 	if (placeID.length < 5) limit = placeID.length
 	for (var i =0; i< limit; i++) {
 		var request = {
-		placeId : placeID[i]
+			placeId : placeID[i]
 		};
 		placeService.getDetails(request, handlePlace);
 	}
@@ -99,7 +99,7 @@ var getPhotos = function () {
 var searchCallback = function (results, status) {
   if (status == google.maps.places.PlacesServiceStatus.OK) {
   	if(results.length==0) {
-  		alert('Sorry no place found near one of the positions')
+  		alert('Sorry no place found near that positions')
   		return;
   	}
   	for (var i =0; i< results.length; i++) {
@@ -144,7 +144,15 @@ var placeMarker = function (ev) {
 	//console.log(pos)
 	marker.setPosition(pos);
 	
-	geocoder.geocode({ 'location': pos}, findPlaceID); //update placeID
+	map.setCenter(pos);
+        
+    var request = {
+        	location: pos,
+    		radius: radiusSearch
+        }
+    placeService.nearbySearch(request, searchCallback);
+        
+	//geocoder.geocode({ 'location': pos}, findPlaceID); //update placeID
 }
 
 //get precision decided by user

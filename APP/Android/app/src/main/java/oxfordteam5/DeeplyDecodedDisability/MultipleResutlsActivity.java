@@ -6,21 +6,28 @@ import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.View;
+import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+
+import com.jsibbold.zoomage.ZoomageView;
+
 import java.io.File;
-import java.io.FileOutputStream;
 import java.util.LinkedList;
 import java.util.List;
+
+import static android.widget.ImageView.ScaleType.CENTER_INSIDE;
 
 public class MultipleResutlsActivity extends AppCompatActivity {
 
     final List<Pair<String,String>> FileList = new LinkedList<Pair<String,String>>();
 
     private TextView message;
-    private LinearLayout container;
+    private LinearLayout parent;
     final String TAG = "DeeplyDecodedDisability";
 
     @Override
@@ -29,7 +36,7 @@ public class MultipleResutlsActivity extends AppCompatActivity {
         setContentView(R.layout.activity_multiple_resutls);
 
         message = (TextView) findViewById(R.id.textView3);
-        container = (LinearLayout) findViewById(R.id.container);
+        parent = (LinearLayout) findViewById(R.id.container);
 
         Intent start = getIntent();
         int size = start.getIntExtra("filesNumber", -1);
@@ -41,29 +48,113 @@ public class MultipleResutlsActivity extends AppCompatActivity {
         }
 
         UploadAndDelete();
+        Log.e("DDD", "in multipleUploads");
     }
 
     private void UploadAndDelete() {//upload and delete all files from the list
+        LinearLayout container;
 
+        message.setVisibility(View.VISIBLE);
+        message.setText("Analysing the pictures");
         for (int i=0; i<FileList.size(); i++) {
             final String path = FileList.get(i).getLeft();
             final String name = FileList.get(i).getRight();
-            ImageView img = new android.support.v7.widget.AppCompatImageView(this) {
-                @Override
-                protected void  onDraw(Canvas canvas) {
-                    super.onDraw(canvas); //draw everything
-                    File image = new File(path);
-                    if(image.exists()) image.delete();
-                }
-            };
-            DrawerLayout.LayoutParams lp = new DrawerLayout.LayoutParams(DrawerLayout.LayoutParams.WRAP_CONTENT, DrawerLayout.LayoutParams.WRAP_CONTENT);
+            ZoomageView img = null;
+            if (i < FileList.size() - 1){
+                 img = new ZoomageView(this) {
+                    @Override
+                    protected void onDraw(Canvas canvas) {
+                        super.onDraw(canvas); //draw everything
+                        message.setVisibility(VISIBLE);
+                        //File image = new File(path);
+                        //if (image.exists()) image.delete();
+
+                    }
+                };
+            } else {
+                 img = new ZoomageView(this) {
+                    @Override
+                    protected void onDraw(Canvas canvas) {
+                        super.onDraw(canvas); //draw everything
+                        //File image = new File(path);
+                        //if (image.exists()) image.delete();
+                        message.setText("Analysis completed");
+                        message.setVisibility(VISIBLE);
+                    }
+                };
+            }
+            RelativeLayout.LayoutParams lp = new RelativeLayout.LayoutParams(DrawerLayout.LayoutParams.WRAP_CONTENT, DrawerLayout.LayoutParams.WRAP_CONTENT);
             lp.setMargins(0,16,0,16);
             img.setLayoutParams(lp);
-            container.addView(img);
-            new Utilities(this).upload(message,img, path,name,null,true);
-
+            img.setScaleType(CENTER_INSIDE);
+            img.setAdjustViewBounds(true);
+            container = getContainer(i);
+            if(container != null) {
+                container.addView(img);
+                new Utilities(this).upload(message,img, path,name,null,true);
+            }
         }
 
 
+    }
+
+
+    private LinearLayout getContainer(int i) {
+
+        LinearLayout result=  new LinearLayout(this);
+        result.setLayoutParams(new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT));
+        result.setOrientation(LinearLayout.HORIZONTAL);
+        //result.setPadding(16,16,16,16);
+
+        //parent.addView(result);
+        //return  result;
+
+        switch (i) {
+            case 0:
+                return findViewById(R.id.image0);
+            case 1:
+                return findViewById(R.id.image1);
+            case 2:
+                return findViewById(R.id.image2);
+            case 3:
+                return findViewById(R.id.image3);
+            case 4:
+                return findViewById(R.id.image4);
+            case 5:
+                return findViewById(R.id.image5);
+            case 6:
+                return findViewById(R.id.image6);
+            case 7:
+                return findViewById(R.id.image7);
+            case 8:
+                return findViewById(R.id.image8);
+            case 9:
+                return findViewById(R.id.image9);
+            case 10:
+                return findViewById(R.id.image10);
+            case 11:
+                return findViewById(R.id.image11);
+            case 12:
+                return findViewById(R.id.image12);
+            case 13:
+                return findViewById(R.id.image13);
+            case 14:
+                return findViewById(R.id.image14);
+            case 15:
+                return findViewById(R.id.image15);
+            case 16:
+                return findViewById(R.id.image16);
+            case 17:
+                return findViewById(R.id.image17);
+            case 18:
+                return findViewById(R.id.image18);
+            case 19:
+                return findViewById(R.id.image19);
+            case 20:
+                return findViewById(R.id.image20);
+
+        }
+
+        return null;
     }
 }

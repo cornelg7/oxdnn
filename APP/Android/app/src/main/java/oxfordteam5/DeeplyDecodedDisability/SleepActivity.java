@@ -49,10 +49,6 @@ public class SleepActivity extends AppCompatActivity {
         super.onStart();
     }
 
-    @Override
-    public void onStop() {
-        super.onStop();
-    }
 
     private boolean askPermissions(int code) {
         if (ContextCompat.checkSelfPermission(SleepActivity.this,
@@ -94,8 +90,7 @@ public class SleepActivity extends AppCompatActivity {
     public void stopSleepMode(View view) {
         Intent sleepMode = new Intent(this, SleepService.class);
         stopService(sleepMode);
-        Intent goBack = new Intent(this, MainActivity.class);
-        startActivity(goBack);
+        finish();
     }
 
     @Override

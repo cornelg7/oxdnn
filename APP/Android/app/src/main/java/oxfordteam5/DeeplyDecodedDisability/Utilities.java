@@ -17,12 +17,12 @@ import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.FileReader;
 import java.io.IOException;
-import java.util.Locale;
 import java.util.concurrent.TimeUnit;
 
 import okhttp3.MediaType;
@@ -104,7 +104,7 @@ public class Utilities {
             final MediaType Img = MediaType.parse("image/" + type);
 
             OkHttpClient.Builder cBuilder = new OkHttpClient.Builder();
-            cBuilder.readTimeout(20000, TimeUnit.MILLISECONDS);
+            cBuilder.readTimeout(60000, TimeUnit.MILLISECONDS);
             cBuilder.writeTimeout(10, TimeUnit.MINUTES);
             cBuilder.connectTimeout(20000, TimeUnit.MILLISECONDS);
 
@@ -169,27 +169,31 @@ public class Utilities {
             Utilities.working = false;
 
             //if(message!= null) message.setText(result);
-            if(voice ==null) new Utilities(context).displayImage(view, message, false, result); //display image
+            if(voice ==null) new Utilities(context).displayImage(view, message, true, result); //display image
 
             new File(result).delete();
+            Log.e("onPostExecure", "deleting: "+result);
 
             if( voice != null) {
                 //voice.setLanguage(Locale.UK);
-                voice.speak(result, TextToSpeech.QUEUE_FLUSH, null, "SleepServiceRequest");
+                //if you cannot find any letter in the response, then say you found nothing
+                if (! result.matches(".*[a-zA-Z].*")) voice.speak("I don't see anything interesting",TextToSpeech.QUEUE_FLUSH,null,"SleepServiceRequest");
+                else voice.speak(result, TextToSpeech.QUEUE_FLUSH, null, "SleepServiceRequest");
             }
 
             if (delete) { //remove file uploaded
                 new File(path).delete();
+                Log.e("onPostExecure", "deleting: "+path);
             }
         }
 
     }
 
-    public void upload(TextView err, ImageView display, String path, String name, TextToSpeech voice) {
+    public void upload(TextView err, ImageView display,  String path, String name, TextToSpeech voice) {
         upload(err,display,path,name,voice,false);
     }
 
-    public void upload (TextView err, ImageView display, String path, String name, TextToSpeech voice,Boolean delete) {
+    public void upload (TextView err, ImageView display,String path, String name, TextToSpeech voice,Boolean delete) {
         working = true;
         Log.e(TAG, "path: " + path + "; name:" + name);
 
@@ -259,7 +263,7 @@ public class Utilities {
 // TAKE AND DISPLAY PICTURES -----------------------------------------------------------------------------------
 
     //SCALE IMAGE AND DISPLAY IT (sometimes image is rotate to fit better; may add option to fix it)
-    public void displayImage(ImageView mImageView, TextView errorMessage, Boolean rotate, String photoDir) {
+    public void displayImage(ImageView mImageView,  TextView errorMessage, Boolean rotate, String photoDir) {
 
         rotateBitmap = rotate;
 
@@ -279,7 +283,7 @@ public class Utilities {
             }
             settings.inJustDecodeBounds = false;
             Bitmap ScaledBitmap = BitmapFactory.decodeFile(photoDir, settings); //this time the bitmap is returned
-
+            if(ScaledBitmap == null) return;
             if(ScaledBitmap.getHeight() < 600 && ScaledBitmap.getWidth() < 600) { //too small, scale up
                 float scaleFactor;
                 if (ScaledBitmap.getWidth() > ScaledBitmap.getHeight()) scaleFactor = 1080 / ScaledBitmap.getWidth();
@@ -334,6 +338,7 @@ public class Utilities {
             errorMessage.setVisibility(View.INVISIBLE);
             mImageView.setVisibility(View.VISIBLE);
             mImageView.setImageBitmap(bitmap);
+
         }
     }
 
@@ -347,7 +352,7 @@ public class Utilities {
     }
 
     //Takes picture, saves it and displays it
-    public void takePictureAndDisplay(File oldImage, Boolean focus, Boolean save, Boolean gal, Boolean rot, ImageView imgView, TextView err) {
+    public void takePictureAndDisplay(File oldImage, Boolean focus, Boolean save, Boolean gal, Boolean rot, ImageView imgView,  TextView err) {
         Image = oldImage;
         focusCamera = focus;
         saveImages = save;
@@ -436,6 +441,7 @@ public class Utilities {
         //delete old image if needed
         if (!saveImages && Image != null && !gallery) {
             if (Image.exists()) Image.delete();
+            Log.e("savePicture", "deleting: "+Image.getAbsolutePath());
             Image = null;
         }
         Image = image;

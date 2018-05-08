@@ -15,7 +15,8 @@ const handlePicture = function(files) {
 		var image = document.createElement("img")
 		image.file = file;
 		image.classList.add("toBeUploaded") //this class will be used to select the file that needs uploading
-		
+		image.setAttribute("data-toggle", "tooltip");
+        image.setAttribute("title","Click picture to remove it")
 		previewDiv.appendChild(image)
 		
 		image.addEventListener('click', new delElem(image))
@@ -26,6 +27,7 @@ const handlePicture = function(files) {
 		
 	}
 	
+	$('[data-toggle="tooltip"]').tooltip()
 }
 
 var count = 0; //global variable which counts the uploaded files

@@ -34,7 +34,7 @@ var geocoderCallBack = function(results, status) {
             map: map,
             position: results[0].geometry.location
         });
-        placeID = results[0].place_id; //get place id
+        placeID = [results[0].place_id]; //get place id
         
       } else {
         alert('Geocode was not successful for the following reason: ' + status);
@@ -87,12 +87,13 @@ var getPhotos = function () {
 
 	if (placeID == null) return; //no place to query
 	
-	var request = {
-		placeId : placeID
-	};
-
+	for (var i =0; i< placceID.length; i++) {
+		var request = {
+		placeId : placeID[i]
+		};
+		placeService.getDetails(request, handlePlace);
+	}
 	
-	placeService.getDetails(request, handlePlace);
 
 }
 
@@ -103,8 +104,23 @@ var searchCallback = function (results, status) {
   		alert('Sorry no place found near that position; try using an address')
   		return;
   	}
+  	for (var i =0; i< results.length; i++) {
+  		if (isLocality(results[i])) continue; 
+  		placeID = placeID.push( results[i].place_id)
+  	}
   	placeID = results[0].place_id
   }
+}
+
+function isLocality(place) {
+
+	var list = place.types;
+	
+	for (var i =0; i<list.length; i++) {
+		if("locality" == list[i]) return true;
+	}
+
+	return false;
 }
 
 //get placeID from geocode response

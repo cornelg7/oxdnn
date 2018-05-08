@@ -66,10 +66,13 @@ var handlePlace = function (place, status) {
 			var image = document.createElement("img")
 			image.src= photo
 			image.classList.add('urlToUpload')
+			image.setAttribute("data-toggle", "tooltip");
+            image.setAttribute("title","Click picture to remove it")
 			previewDiv.appendChild(image)
 			image.addEventListener('click', new delElem(image))
 			
 		}
+		$('[data-toggle="tooltip"]').tooltip()
 		
 	} else {
 		alert('Google cannot find the place requested: '+ status);

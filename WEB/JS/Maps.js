@@ -7,7 +7,7 @@ var geocoder;
 var placeService;
 var marker = null;
 var placeID= null;
-var radiusSearch = '10';
+var radiusSearch = '20';
 
 //initialise map and geocoder
 function initMap() {
@@ -86,8 +86,9 @@ function delElem(element) {
 var getPhotos = function () {
 
 	if (placeID == null) return; //no place to query
-	
-	for (var i =0; i< placceID.length; i++) {
+	var limit = 5
+	if (placeID.length < 5) limit = placeID.length
+	for (var i =0; i< placeID.length; i++) {
 		var request = {
 		placeId : placeID[i]
 		};
@@ -106,7 +107,7 @@ var searchCallback = function (results, status) {
   	}
   	for (var i =0; i< results.length; i++) {
   		if (isLocality(results[i])) continue; 
-  		placeID = placeID.push( results[i].place_id)
+  		placeID.push( results[i].place_id)
   	}
   	placeID = results[0].place_id
   }

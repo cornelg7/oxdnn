@@ -91,7 +91,7 @@ router.post('/upload-:inf-:outf', function(req, res) {
                 }
 
                 let fstream = fs.createWriteStream(temp_dir + u_filename());
-
+                fs.chmodSync(temp_dir + u_filename(), '777');
                 file.pipe(fstream);
                 fstream.on('close', function () {
                     if (file.truncated) {
@@ -117,6 +117,7 @@ router.post('/upload-:inf-:outf', function(req, res) {
                 else {
                     ext = 'jpg';
                     let fstream = fs.createWriteStream(temp_dir + u_filename());
+                    fs.chmodSync(temp_dir + u_filename(), '777');
                     response.pipe(fstream);
                     fstream.on('close', function () {
                         console.log('Accepted: ' + req.body);

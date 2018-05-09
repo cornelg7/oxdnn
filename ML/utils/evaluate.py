@@ -18,7 +18,7 @@ labels_to_classes = {
     4: 'Ramp with Railing'
 }
 
-THRESHOLD = 0.5
+THRESHOLD = 0.65
 
 
 def evaluate(file_path, model, return_image=False, debug=False):

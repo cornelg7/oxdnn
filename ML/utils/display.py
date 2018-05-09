@@ -1,3 +1,6 @@
+import cv2
+import numpy as np
+
 def label_colour(label):
     return colour_list[label]
 
@@ -16,3 +19,13 @@ colour_list = [
     [229,  22, 146],
     [229,  22,  22]
 ]
+
+def draw_caption(image, box, caption):
+    """
+    Adapted from keras_retinanet.utils.visualization, with text moved
+    """
+    box = np.array(box).astype(int)
+    cv2.putText(image, caption, (b[0], b[1] + 20), cv2.FONT_HERSHEY_PLAIN, 1, (0, 0, 0), 2)
+    cv2.putText(image, caption, (b[0], b[1] + 20), cv2.FONT_HERSHEY_PLAIN, 1, (255, 255, 255), 1)
+
+    

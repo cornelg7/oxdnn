@@ -101,7 +101,7 @@ function createXHR(image,name,total) {
         	var string = "unknown issue";
         	try {
         		string = xhr.responseText
-        	} catch (Exception e) {
+        	} catch  (excep) {
         		
         	}
             alert("something went wrong: "+string+" server status: "+xhr.status);

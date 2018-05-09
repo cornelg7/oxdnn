@@ -104,6 +104,10 @@ function createXHR(image,name,total) {
         	} catch  (excep) {
         		
         	}
+        	var text = self.p.innerHTML
+        	text = text.replace("... analysing picture"," error")
+	        text = text.replace("uploaded", "")
+	        self.p.innerHTML = text
             alert("something went wrong: "+string+" server status: "+xhr.status);
         }
         if (xhr.readyState == 4 && xhr.status == 200) {

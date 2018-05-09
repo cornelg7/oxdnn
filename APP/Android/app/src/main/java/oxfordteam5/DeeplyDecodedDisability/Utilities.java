@@ -9,6 +9,7 @@ import android.graphics.SurfaceTexture;
 import android.hardware.Camera;
 import android.media.ExifInterface;
 import android.net.Uri;
+import android.nfc.Tag;
 import android.os.AsyncTask;
 import android.os.Environment;
 import android.speech.tts.TextToSpeech;
@@ -147,6 +148,7 @@ public class Utilities {
             build.post(body);
             Request request = build.build();
 
+            if(voice != null) voice.speak("I'm analysing the image",TextToSpeech.QUEUE_FLUSH,null,"UploadService");
             Response response = null;
             try {
                 response = client.newCall(request).execute();
@@ -192,8 +194,12 @@ public class Utilities {
             Utilities.working = false;
 
             //if(message!= null) message.setText(result);
-            if(voice ==null) new Utilities(context).displayImage(view, message, true, result); //display image
-            if(visible) message.setVisibility(View.VISIBLE);
+            if(voice ==null) {
+                new Utilities(context).displayImage(view, message, true, result); //display image
+                if(visible) message.setVisibility(View.VISIBLE);
+                Log.e("post execute", "voice is null");
+            }
+
 
             new File(result).delete();
             Log.e("onPostExecure", "deleting: "+result);

@@ -8,6 +8,7 @@ var placeService;
 var marker = null;
 var placeID= null;
 var radiusSearch = '30';
+var foundPhotos;
 
 //initialise map and geocoder
 function initMap() {
@@ -21,6 +22,7 @@ function initMap() {
         geocoder = new google.maps.Geocoder();
         geocoder.geocode({ 'address': 'Department of Computer Science, University of Oxford'}, geocoderCallBack);
 		placeService = new google.maps.places.PlacesService(map);
+		foundPhotos = false;
 };
 
 //initMap();
@@ -57,10 +59,11 @@ var handlePlace = function (place, status) {
 		var previewDiv = document.getElementById("dropZone")
 
 		if(place.photos == null)  {
-			alert('No photos was found at the give location; try using an address')
+			if(!foundPhotos) alert('No photos was found at the give location; try using an address')
 			return;
 		}
 		for (var i =0; i < place.photos.length; i++) {
+			foundPhotos = true;
 			var photo = place.photos[i].getUrl({'maxWidth': 1080, 'maxHeight': 1080}); //get photo url
 			//create photo thumbnail
 			var image = document.createElement("img")
@@ -79,9 +82,12 @@ var handlePlace = function (place, status) {
 	}
 }
 
+
 //get photos from Google
 var getPhotos = function () {
 
+	foundPhotos = false;
+	
 	if (placeID == null) return; //no place to query
 	var limit = 5
 	if (placeID.length < 5) limit = placeID.length

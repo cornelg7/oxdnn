@@ -6,9 +6,9 @@ import cv2
 
 from keras_retinanet.utils.image import read_image_bgr, preprocess_image, \
     resize_image
-from keras_retinanet.utils.visualization import draw_box, draw_caption
+from keras_retinanet.utils.visualization import draw_box
 
-from .display import label_colour
+from .display import label_colour, draw_caption
 
 labels_to_classes = {
     0: 'Disabled Parking Sign',

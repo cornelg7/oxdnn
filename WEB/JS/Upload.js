@@ -98,7 +98,13 @@ function createXHR(image,name,total) {
     xhr.onreadystatechange = function() {
     	
         if (xhr.readyState == 4 && xhr.status != 200) { //4 means DONE; 200 means SUCCESS
-            alert("something went wrong: "+xhr.responseText+" server status: "+xhr.status);
+        	var string = "unknown issue";
+        	try {
+        		string = xhr.responseText
+        	} catch  (excep) {
+        		
+        	}
+            alert("something went wrong: "+string+" server status: "+xhr.status);
         }
         if (xhr.readyState == 4 && xhr.status == 200) {
 			//write the response into a <p></p> in the outputDiv

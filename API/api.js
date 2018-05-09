@@ -56,7 +56,7 @@ router.post('/upload-:inf-:outf', function(req, res) {
             return uuid + '.' + ext;
         }
         if (req.params.outf === 'pic') {
-            resFun = function(error, nn_res) {                    
+            resFun = function(error, nn_res) {
                 if (error) {
                     console.log('Neural network error: ' + error);
                     res.status(500).send('Something went wrong!');
@@ -66,9 +66,8 @@ router.post('/upload-:inf-:outf', function(req, res) {
 
                 sendImage(nn_res["outimage"], ext, res, true);
             };
-        }
-        else {
-            resFun = function(error, nn_res) {                    
+        } else {
+            resFun = function(error, nn_res) {
                 deleteFile(temp_dir + u_filename());
 
                 if (error) {
@@ -82,7 +81,7 @@ router.post('/upload-:inf-:outf', function(req, res) {
         }
         if (req.params.inf === 'pic') {
             req.pipe(req.busboy);
-            req.busboy.on('file', function (fieldname, file, filename) {
+            req.busboy.on('file', function(fieldname, file, filename) {
                 ext = filename.split('.').pop();
                 if (ext === 'jpeg') ext = 'jpg';
                 if (ext !== 'png' && ext !== 'jpg') {
@@ -91,9 +90,8 @@ router.post('/upload-:inf-:outf', function(req, res) {
                 }
 
                 let fstream = fs.createWriteStream(temp_dir + u_filename());
-
                 file.pipe(fstream);
-                fstream.on('close', function () {
+                fstream.on('close', function() {
                     if (file.truncated) {
                         console.log('Rejected: ' + filename + ' (too large)');
                         deleteFile(temp_dir + u_filename());
@@ -102,29 +100,29 @@ router.post('/upload-:inf-:outf', function(req, res) {
                     }
 
                     console.log('Accepted: ' + filename);
-                        
+
+                    fs.chmodSync(temp_dir + u_filename(), '666');
                     client.invoke('evaluate', u_filename(), resFun);
                 });
             });
-        }
-        else {
+        } else {
             request('https://lh3.googleusercontent.com/p/' + req.body)
-            .on('response', function(response) {
-                if(response.statusCode != 200) {
-                    res.status(400).send('Malformed url suffix!');
-                    return;
-                }
-                else {
-                    ext = 'jpg';
-                    let fstream = fs.createWriteStream(temp_dir + u_filename());
-                    response.pipe(fstream);
-                    fstream.on('close', function () {
-                        console.log('Accepted: ' + req.body);
+                .on('response', function(response) {
+                    if (response.statusCode != 200) {
+                        res.status(400).send('Malformed url suffix!');
+                        return;
+                    } else {
+                        ext = 'jpg';
+                        let fstream = fs.createWriteStream(temp_dir + u_filename());
+                        response.pipe(fstream);
+                        fstream.on('close', function() {
+                            console.log('Accepted: ' + req.body);
 
-                        client.invoke('evaluate', u_filename(), resFun);
-                    });
-                }
-            });
+                            fs.chmodSync(temp_dir + u_filename(), '666');
+                            client.invoke('evaluate', u_filename(), resFun);
+                        });
+                    }
+                });
         }
     } catch (e) {
         console.log(e);
@@ -140,7 +138,7 @@ function deleteFile(path) {
 function sendImage(filepath, ext, res, erase) {
     let type = mime[ext] || 'text/plain';
     let s = fs.createReadStream(filepath);
-    s.on('open', function () {
+    s.on('open', function() {
         console.log('Sanity check - content type: ' + type);
         res.set('Content-Type', type);
         s.pipe(res);

@@ -15,7 +15,8 @@ const handlePicture = function(files) {
 		var image = document.createElement("img")
 		image.file = file;
 		image.classList.add("toBeUploaded") //this class will be used to select the file that needs uploading
-		
+		image.setAttribute("data-toggle", "tooltip");
+        image.setAttribute("title","Click picture to remove it")
 		previewDiv.appendChild(image)
 		
 		image.addEventListener('click', new delElem(image))
@@ -26,6 +27,7 @@ const handlePicture = function(files) {
 		
 	}
 	
+	$('[data-toggle="tooltip"]').tooltip()
 }
 
 var count = 0; //global variable which counts the uploaded files
@@ -33,6 +35,10 @@ var count = 0; //global variable which counts the uploaded files
 function delElem(element) {
 	return function(e) {
 		element.parentNode.removeChild(element)
+		var tooltips = document.querySelectorAll(".tooltip")
+		for (var i =0; i<tooltips.length; i++) {
+			tooltips[i].parentNode.removeChild(tooltips[i])
+		}
 	}
 }
 
@@ -99,7 +105,7 @@ function createXHR(image,name,total) {
 			
 			var reader = new FileReader();
 			var output = document.createElement("img") //need to scale the image to some max-width and max-height
-			output.style = 'max-width: 100%; max-height: 1080px; margin-left: auto; margin-right: auto; margin-bottom: 2rem; background-color: grey'
+			output.style = 'max-width: 100%; max-height: 1080px; margin-right: 1rem; margin-bottom: 1rem; background-color: grey'
 			reader.onload =( function(Img) { return function (event) {Img.src = event.target.result;}; }  ) (output)
 			reader.readAsDataURL(xhr.response)
         	var text = self.p.innerHTML

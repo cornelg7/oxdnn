@@ -2,15 +2,12 @@ package oxfordteam5.DeeplyDecodedDisability;
 
 import android.content.Intent;
 import android.content.pm.ActivityInfo;
-import android.os.Handler;
-import android.speech.tts.TextToSpeech;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import java.util.Locale;
 
 public class ResultActivity extends AppCompatActivity {
 
@@ -25,6 +22,7 @@ public class ResultActivity extends AppCompatActivity {
         setContentView(R.layout.activity_result);
         message = findViewById(R.id.textView2);
         view = findViewById(R.id.imageView);
+
 
         setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
 

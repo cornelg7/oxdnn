@@ -89,6 +89,9 @@ public class MainActivity extends AppCompatActivity {
 
         gallery = false;
 
+        mImageView.setVisibility(View.VISIBLE);
+        mImageView.setImageDrawable(getResources().getDrawable(R.drawable.home_screen));
+
         if(!askReadWritePermissions(READ_WRITE_onCREATE)) return;
 
         //create temp options file
@@ -120,6 +123,7 @@ public class MainActivity extends AppCompatActivity {
                 e.printStackTrace();
             }
         }
+
 
 
     }
@@ -217,8 +221,9 @@ public class MainActivity extends AppCompatActivity {
 
         //HANDLE NULL IMAGE FILE
         if(Image == null) {
-            errorMessage.setText("error: Image == null");
+            errorMessage.setText("error: no image loaded");
             errorMessage.setVisibility(View.VISIBLE);
+            mImageView.setVisibility(View.INVISIBLE);
             return;
         }
 
@@ -339,10 +344,16 @@ public class MainActivity extends AppCompatActivity {
                 @Override
                 public void onComplete(@NonNull Task<PlacePhotoMetadataResponse> task) {
 
+                    Log.e("DDD", "photosResponse Done");
                     PlacePhotoMetadataResponse response = task.getResult(); // get response
                     PlacePhotoMetadataBuffer photoBuffer = response.getPhotoMetadata(); //get buffer with list of photos
                     final int bufferSize = photoBuffer.getCount();
 
+                    if(bufferSize == 0) {
+                        errorMessage.setText("Sorry, no photos available for that place");
+                        errorMessage.setVisibility(View.VISIBLE);
+                        return;
+                    }
                     final Intent multipleUploads = new Intent(MainActivity.this, MultipleResutlsActivity.class);
                     multipleUploads.putExtra("filesNumber", bufferSize);
 
@@ -356,6 +367,7 @@ public class MainActivity extends AppCompatActivity {
                             @Override
                             public void onComplete(@NonNull Task<PlacePhotoResponse> task) {
 
+                                Log.e("DDD", "pictureResponse Done");
                                 Bitmap bitmap = task.getResult().getBitmap(); //get bitmap
 
                                 //save bitmap to file
@@ -394,6 +406,7 @@ public class MainActivity extends AppCompatActivity {
 
 
                                 if (count == bufferSize-1) { //the this was last photo
+                                    mImageView.setImageDrawable( getResources().getDrawable(R.drawable.home_screen)); //put homescreen back
                                     startActivity(multipleUploads);
                                 }
 

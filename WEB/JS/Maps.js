@@ -7,6 +7,7 @@ var geocoder;
 var placeService;
 var marker = null;
 var placeID= null;
+var radiusSearch = '30';
 
 //initialise map and geocoder
 function initMap() {
@@ -33,7 +34,7 @@ var geocoderCallBack = function(results, status) {
             map: map,
             position: results[0].geometry.location
         });
-        placeID = results[0].place_id; //get place id
+        placeID = [results[0].place_id]; //get place id
         
       } else {
         alert('Geocode was not successful for the following reason: ' + status);
@@ -65,19 +66,16 @@ var handlePlace = function (place, status) {
 			var image = document.createElement("img")
 			image.src= photo
 			image.classList.add('urlToUpload')
+			image.setAttribute("data-toggle", "tooltip");
+            image.setAttribute("title","Click picture to remove it")
 			previewDiv.appendChild(image)
 			image.addEventListener('click', new delElem(image))
 			
 		}
+		$('[data-toggle="tooltip"]').tooltip()
 		
 	} else {
 		alert('Google cannot find the place requested: '+ status);
-	}
-}
-
-function delElem(element) {
-	return function(e) {
-		element.parentNode.removeChild(element)
 	}
 }
 
@@ -85,14 +83,42 @@ function delElem(element) {
 var getPhotos = function () {
 
 	if (placeID == null) return; //no place to query
-	
-	var request = {
-		placeId : placeID
-	};
+	var limit = 5
+	if (placeID.length < 5) limit = placeID.length
+	for (var i =0; i< limit; i++) {
+		var request = {
+			placeId : placeID[i]
+		};
+		placeService.getDetails(request, handlePlace);
+	}
+	placeID = []
 
-	
-	placeService.getDetails(request, handlePlace);
+}
 
+//callback for search nearby method
+var searchCallback = function (results, status) {
+  if (status == google.maps.places.PlacesServiceStatus.OK) {
+  	if(results.length==0) {
+  		alert('Sorry no place found near that positions')
+  		return;
+  	}
+  	for (var i =0; i< results.length; i++) {
+  		if (isLocality(results[i])) continue; 
+  		placeID.push( results[i].place_id)
+  	}
+  	
+  }
+}
+
+function isLocality(place) {
+
+	var list = place.types;
+	
+	for (var i =0; i<list.length; i++) {
+		if("locality" == list[i]) return true;
+	}
+
+	return false;
 }
 
 //get placeID from geocode response
@@ -100,22 +126,41 @@ var findPlaceID = function(results, status) {
 
       if (status == 'OK') {
         map.setCenter(results[0].geometry.location);
-        placeID = results[0].place_id; //get place id
+        
+        var request = {
+        	location: results[0].geometry.location,
+    		radius: radiusSearch
+        }
+        placeService.nearbySearch(request, searchCallback); //here we look for a place nearby
       } else {
         alert('Geocode was not successful for the following reason: ' + status);
       }
     }
 
-//function which place a marker where the user double-click
+//function which place a marker where the user click
 var placeMarker = function (ev) {
 
 	var pos = ev.latLng;
 	//console.log(pos)
 	marker.setPosition(pos);
 	
-	geocoder.geocode({ 'location': pos}, findPlaceID); //update placeID
+	map.setCenter(pos);
+        
+    var request = {
+        	location: pos,
+    		radius: radiusSearch
+        }
+    placeService.nearbySearch(request, searchCallback);
+        
+	//geocoder.geocode({ 'location': pos}, findPlaceID); //update placeID
 }
 
+//get precision decided by user
+var getPrecision = function() {
+
+	radiusSearch = document.getElementById('precision').value
+
+}
 
 
 

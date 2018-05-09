@@ -23,120 +23,184 @@
             android:id="@+id/container"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:orientation="vertical" >
+            android:orientation="vertical"
+            android:adjustViewBounds="true"
+            android:cropToPadding="false"
+            android:scaleType="centerInside">
 
-            <LinearLayout
+            <com.jsibbold.zoomage.ZoomageView
                 android:id="@+id/image0"
+                android:visibility="visible"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="horizontal" />
+                android:adjustViewBounds="true"
+                android:cropToPadding="false"
+                android:scaleType="centerInside"/>
 
-            <LinearLayout
+            <com.jsibbold.zoomage.ZoomageView
                 android:id= "@+id/image1"
+                android:visibility="visible"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="horizontal" />
+                android:adjustViewBounds="true"
+                android:cropToPadding="false"
+                android:scaleType="centerInside"/>
 
-            <LinearLayout
+            <com.jsibbold.zoomage.ZoomageView
                 android:id="@+id/image2"
+                android:visibility="visible"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="horizontal" />
+                android:adjustViewBounds="true"
+                android:cropToPadding="false"
+                android:scaleType="centerInside"/>
 
-            <LinearLayout
+            <com.jsibbold.zoomage.ZoomageView
                 android:id="@+id/image3"
+                android:visibility="visible"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="horizontal" />
+                android:adjustViewBounds="true"
+                android:cropToPadding="false"
+                android:scaleType="centerInside"/>
 
-            <LinearLayout
+            <com.jsibbold.zoomage.ZoomageView
                 android:id="@+id/image4"
+                android:visibility="visible"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="horizontal" />
+                android:adjustViewBounds="true"
+                android:cropToPadding="false"
+                android:scaleType="centerInside"/>
 
-            <LinearLayout
+            <com.jsibbold.zoomage.ZoomageView
                 android:id="@+id/image5"
+                android:visibility="visible"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="horizontal" />
-
-            <LinearLayout
+                android:adjustViewBounds="true"
+                android:cropToPadding="false"
+                android:scaleType="centerInside"/>
+            <com.jsibbold.zoomage.ZoomageView
                 android:id="@+id/image6"
+                android:visibility="visible"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="horizontal" />
-            <LinearLayout
+                android:adjustViewBounds="true"
+                android:cropToPadding="false"
+                android:scaleType="centerInside"/>
+            <com.jsibbold.zoomage.ZoomageView
                 android:id="@+id/image7"
+                android:visibility="visible"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="horizontal" />
-            <LinearLayout
+                android:adjustViewBounds="true"
+                android:cropToPadding="false"
+                android:scaleType="centerInside"/>
+            <com.jsibbold.zoomage.ZoomageView
                 android:id="@+id/image8"
+                android:visibility="visible"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="horizontal" />
-            <LinearLayout
+                android:adjustViewBounds="true"
+                android:cropToPadding="false"
+                android:scaleType="centerInside"/>
+            <com.jsibbold.zoomage.ZoomageView
                 android:id="@+id/image9"
+                android:visibility="visible"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="horizontal" />
-            <LinearLayout
+                android:adjustViewBounds="true"
+                android:cropToPadding="false"
+                android:scaleType="centerInside"/>
+            <com.jsibbold.zoomage.ZoomageView
                 android:id="@+id/image10"
+                android:visibility="visible"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="horizontal" />
-            <LinearLayout
+                android:adjustViewBounds="true"
+                android:cropToPadding="false"
+                android:scaleType="centerInside"/>
+            <com.jsibbold.zoomage.ZoomageView
                 android:id="@+id/image11"
+                android:visibility="visible"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="horizontal" />
-            <LinearLayout
+                android:adjustViewBounds="true"
+                android:cropToPadding="false"
+                android:scaleType="centerInside"/>
+            <com.jsibbold.zoomage.ZoomageView
                 android:id="@+id/image12"
+                android:visibility="visible"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="horizontal" />
-            <LinearLayout
+                android:adjustViewBounds="true"
+                android:cropToPadding="false"
+                android:scaleType="centerInside"/>
+            <com.jsibbold.zoomage.ZoomageView
                 android:id="@+id/image13"
+                android:visibility="visible"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="horizontal" />
-            <LinearLayout
+                android:adjustViewBounds="true"
+                android:cropToPadding="false"
+                android:scaleType="centerInside"/>
+            <com.jsibbold.zoomage.ZoomageView
                 android:id="@+id/image14"
+                android:visibility="visible"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="horizontal" />
-            <LinearLayout
+                android:adjustViewBounds="true"
+                android:cropToPadding="false"
+                android:scaleType="centerInside"/>
+            <com.jsibbold.zoomage.ZoomageView
                 android:id="@+id/image15"
+                android:visibility="visible"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="horizontal" />
-            <LinearLayout
+                android:adjustViewBounds="true"
+                android:cropToPadding="false"
+                android:scaleType="centerInside"/>
+            <com.jsibbold.zoomage.ZoomageView
                 android:id="@+id/image16"
+                android:visibility="visible"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="horizontal" />
-            <LinearLayout
+                android:adjustViewBounds="true"
+                android:cropToPadding="false"
+                android:scaleType="centerInside"/>
+            <com.jsibbold.zoomage.ZoomageView
                 android:id="@+id/image17"
+                android:visibility="visible"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="horizontal" />
-            <LinearLayout
+                android:adjustViewBounds="true"
+                android:cropToPadding="false"
+                android:scaleType="centerInside"/>
+            <com.jsibbold.zoomage.ZoomageView
                 android:id="@+id/image18"
+                android:visibility="visible"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="horizontal" />
-            <LinearLayout
+                android:adjustViewBounds="true"
+                android:cropToPadding="false"
+                android:scaleType="centerInside"/>
+            <com.jsibbold.zoomage.ZoomageView
                 android:id="@+id/image19"
+                android:visibility="visible"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="horizontal" />
-            <LinearLayout
+                android:adjustViewBounds="true"
+                android:cropToPadding="false"
+                android:scaleType="centerInside"/>
+            <com.jsibbold.zoomage.ZoomageView
                 android:id="@+id/image20"
+                android:visibility="visible"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="horizontal" />
-
+                android:adjustViewBounds="true"
+                android:cropToPadding="false"
+                android:scaleType="centerInside"/>
 
 
         </LinearLayout>

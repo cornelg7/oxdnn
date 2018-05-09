@@ -20,6 +20,7 @@ import android.widget.TextView;
 
 import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.FileReader;
 import java.io.IOException;
@@ -67,15 +68,16 @@ public class Utilities {
         TextToSpeech voice;
         ImageView view;
         Context context;
-        Boolean delete;
+        Boolean delete, visible;
         String path;
 
-        public UploadFile(TextView messageView, ImageView display, TextToSpeech tts, Context act, Boolean del) {
+        public UploadFile(TextView messageView, ImageView display, TextToSpeech tts, Context act, Boolean del, Boolean dis) {
             message = messageView;
             voice = tts;
             context = act;
             view = display;
             delete= del;
+            visible = dis;
         }
 
         @Override
@@ -87,6 +89,27 @@ public class Utilities {
             if (path == "" || path == null) return "error";
             if (name == "" || name == null) return "error";
 
+
+            //here we scale down images
+            BitmapFactory.Options settings = new BitmapFactory.Options();
+            settings.inJustDecodeBounds = true; //so we don't use up much memory
+            BitmapFactory.decodeFile(path, settings); //data invariant : photoDir is path of Image
+            if (settings.outWidth > 1048 || settings.outHeight > 1048) { //scale the picture if one dimension exceeds 1048px
+                int scale = (int) Math.max(settings.outHeight / 1048, settings.outWidth / 1048); //the largest dimension is scale*1048
+                settings.inSampleSize = scale; //so the image is 1/scale its original size
+            }
+            settings.inJustDecodeBounds = false;
+            Bitmap ScaledBitmap = BitmapFactory.decodeFile(path, settings); //this time the bitmap is returned
+            File image = new File(path);
+            try {
+                FileOutputStream savePhoto = new FileOutputStream(image);
+                ScaledBitmap.compress(Bitmap.CompressFormat.PNG,100,savePhoto);
+                savePhoto.close();
+            } catch (Exception e) {
+                e.printStackTrace();
+                return "error with files";
+            }
+            //image scaled down
 
             String type = new Utilities(null).getFileExtension(name);
             if (!(type.equals("jpg") || type.equals("png") || type.equals("bmp") || type.equals("gif") || type.equals("jpeg") || type.equals("tiff"))) {
@@ -170,6 +193,7 @@ public class Utilities {
 
             //if(message!= null) message.setText(result);
             if(voice ==null) new Utilities(context).displayImage(view, message, true, result); //display image
+            if(visible) message.setVisibility(View.VISIBLE);
 
             new File(result).delete();
             Log.e("onPostExecure", "deleting: "+result);
@@ -197,7 +221,14 @@ public class Utilities {
         working = true;
         Log.e(TAG, "path: " + path + "; name:" + name);
 
-        new UploadFile(err, display, voice, context,delete).execute(path, name); //upload files and show the response in the textview display
+        new UploadFile(err, display, voice, context,delete, false).execute(path, name); //upload files and show the response in the textview display
+    }
+
+    public void upload2 (TextView err, ImageView display,String path, String name, TextToSpeech voice,Boolean delete) {
+        working = true;
+        Log.e(TAG, "path: " + path + "; name:" + name);
+
+        new UploadFile(err, display, voice, context,delete,true).execute(path, name); //upload files and show the response in the textview display
     }
 
     public String getFileExtension(String name) {

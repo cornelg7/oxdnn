@@ -52,46 +52,22 @@ public class MultipleResutlsActivity extends AppCompatActivity {
     }
 
     private void UploadAndDelete() {//upload and delete all files from the list
-        LinearLayout container;
 
         message.setVisibility(View.VISIBLE);
         message.setText("Analysing the pictures");
         for (int i=0; i<FileList.size(); i++) {
             final String path = FileList.get(i).getLeft();
             final String name = FileList.get(i).getRight();
-            ZoomageView img = null;
-            if (i < FileList.size() - 1){
-                 img = new ZoomageView(this) {
-                    @Override
-                    protected void onDraw(Canvas canvas) {
-                        super.onDraw(canvas); //draw everything
-                        message.setVisibility(VISIBLE);
-                        //File image = new File(path);
-                        //if (image.exists()) image.delete();
+            ZoomageView img = getImage(i);
 
-                    }
-                };
-            } else {
-                 img = new ZoomageView(this) {
-                    @Override
-                    protected void onDraw(Canvas canvas) {
-                        super.onDraw(canvas); //draw everything
-                        //File image = new File(path);
-                        //if (image.exists()) image.delete();
-                        message.setText("Analysis completed");
-                        message.setVisibility(VISIBLE);
-                    }
-                };
-            }
-            RelativeLayout.LayoutParams lp = new RelativeLayout.LayoutParams(DrawerLayout.LayoutParams.WRAP_CONTENT, DrawerLayout.LayoutParams.WRAP_CONTENT);
+            LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(DrawerLayout.LayoutParams.WRAP_CONTENT, DrawerLayout.LayoutParams.WRAP_CONTENT);
             lp.setMargins(0,16,0,16);
-            img.setLayoutParams(lp);
-            img.setScaleType(CENTER_INSIDE);
-            img.setAdjustViewBounds(true);
-            container = getContainer(i);
-            if(container != null) {
-                container.addView(img);
-                new Utilities(this).upload(message,img, path,name,null,true);
+            //img.setScaleType(CENTER_INSIDE);
+            //img.setAdjustViewBounds(true);;
+
+            if(img != null) {
+                img.setLayoutParams(lp);
+                new Utilities(this).upload2(message,img, path,name,null,true);
             }
         }
 
@@ -99,15 +75,8 @@ public class MultipleResutlsActivity extends AppCompatActivity {
     }
 
 
-    private LinearLayout getContainer(int i) {
+    private ZoomageView getImage(int i) {
 
-        LinearLayout result=  new LinearLayout(this);
-        result.setLayoutParams(new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT));
-        result.setOrientation(LinearLayout.HORIZONTAL);
-        //result.setPadding(16,16,16,16);
-
-        //parent.addView(result);
-        //return  result;
 
         switch (i) {
             case 0:

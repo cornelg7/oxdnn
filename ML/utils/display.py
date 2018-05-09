@@ -25,7 +25,6 @@ def draw_caption(image, box, caption):
     Adapted from keras_retinanet.utils.visualization, with text moved
     """
     box = np.array(box).astype(int)
-    cv2.putText(image, caption, (b[0], b[1] + 20), cv2.FONT_HERSHEY_PLAIN, 1, (0, 0, 0), 2)
-    cv2.putText(image, caption, (b[0], b[1] + 20), cv2.FONT_HERSHEY_PLAIN, 1, (255, 255, 255), 1)
+    cv2.putText(image, caption, (box[0], box[1] + 20), cv2.FONT_HERSHEY_PLAIN, 1, (0, 0, 0), 2)
+    cv2.putText(image, caption, (box[0], box[1] + 20), cv2.FONT_HERSHEY_PLAIN, 1, (255, 255, 255), 1)
 
-    
